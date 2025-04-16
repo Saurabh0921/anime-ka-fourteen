@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Romance Anime - AKF</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    body.dark { background-color: #111827; color: white; }
+    .card:hover { transform: scale(1.02); transition: 0.3s ease-in-out; }
+    .card-content { display: none; }
+    .card.expanded .card-content { display: block; }
+    #sidebar { transition: transform 0.3s ease-in-out; }
+    .bg-light { background-color: #f9fafb; color: #1f2937; }
+    .dark .bg-light { background-color: #1f2937; color: white; }
+    .dark .text-gray-900 { color: white !important; }
+    .dark .text-gray-500 { color: #9ca3af !important; }
+    .search-bar { transition: all 0.3s ease-in-out; }
+  </style>
+</head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-white transition-all">
+
+<!-- Navbar -->
+<nav class="flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 shadow text-gray-900 dark:text-white relative">
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white z-10">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+    <a href="../akf.html" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+  </div>
+  <div id="searchBarWrapper" class="absolute inset-0 flex justify-center items-center pointer-events-none">
+    <input id="searchInput" type="text" placeholder="Search anime..." class="w-2/3 md:w-1/3 px-4 py-2 rounded-full border-none outline-none text-black dark:text-white bg-gray-200 dark:bg-gray-700 opacity-0 scale-95 transition-all duration-300 pointer-events-auto" />
+  </div>
+  <div class="flex items-center gap-4 z-10">
+    <button id="searchToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+      <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+    </button>
+    <button id="themeToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+      <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-48 bg-gray-200 dark:bg-gray-800 p-4 space-y-4 z-50 transform -translate-x-full transition-transform duration-300">
+  <a href="../akf.html#home" class="block font-semibold hover:underline">Home</a>
+  <a href="../akf.html#popular" class="block font-semibold hover:underline">Popular</a>
+  <a href="../akf.html#genres" class="block font-semibold hover:underline">Genres</a>
+  <a href="../akf.html#settings" class="block font-semibold hover:underline">Settings</a>
+</aside>
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+<!-- Content -->
+<main class="p-4 max-w-5xl mx-auto">
+  <section id="searchResults" class="p-4 hidden">
+    <h2 class="text-2xl font-semibold mb-4">Search Results</h2>
+    <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+  </section>
+
+  <section id="animeSection">
+    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+      <i data-lucide="heart" class="w-6 h-6 text-red-500 dark:text-red-400"></i>
+      Romance Anime
+    </h2>
+
+    <div id="animeCards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Your Name -->
+      <div class="card bg-light dark:bg-gray-800 p-4 rounded-xl shadow cursor-pointer" onclick="this.classList.toggle('expanded')">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-lg text-gray-900 dark:text-white">Your Name</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Romance, Drama</p>
+          </div>
+          <img src="https://via.placeholder.com/100" class="rounded" />
+        </div>
+        <div class="card-content mt-2 text-gray-700 dark:text-gray-300">
+          <p>A boy and girl mysteriously swap bodies across time and space in a stunning emotional journey.</p>
+        </div>
+      </div>
+
+      <!-- Toradora -->
+      <div class="card bg-light dark:bg-gray-800 p-4 rounded-xl shadow cursor-pointer" onclick="this.classList.toggle('expanded')">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-lg text-gray-900 dark:text-white">Toradora!</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Romance, Slice of Life</p>
+          </div>
+          <img src="https://via.placeholder.com/100" class="rounded" />
+        </div>
+        <div class="card-content mt-2 text-gray-700 dark:text-gray-300">
+          <p>A tsundere girl and a misunderstood boy team up to help each other with their crushes... and maybe fall in love.</p>
+        </div>
+      </div>
+
+      <!-- Clannad: After Story -->
+      <div class="card bg-light dark:bg-gray-800 p-4 rounded-xl shadow cursor-pointer" onclick="this.classList.toggle('expanded')">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-lg text-gray-900 dark:text-white">Clannad: After Story</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Romance, Drama</p>
+          </div>
+          <img src="https://via.placeholder.com/100" class="rounded" />
+        </div>
+        <div class="card-content mt-2 text-gray-700 dark:text-gray-300">
+          <p>A powerful continuation of Clannad that explores family, loss, and unconditional love.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const searchToggle = document.getElementById('searchToggle');
+  const searchInput = document.getElementById('searchInput');
+  const searchResultsSection = document.getElementById('searchResults');
+  const resultsContainer = document.getElementById('resultsContainer');
+  const animeCards = document.getElementById('animeCards');
+  const animeSection = document.getElementById('animeSection');
+
+  let searchOpen = false;
+  searchToggle.addEventListener('click', () => {
+    searchOpen = !searchOpen;
+    if (searchOpen) {
+      searchInput.classList.remove('opacity-0', 'scale-95');
+      searchInput.classList.add('opacity-100', 'scale-100');
+      searchInput.focus();
+    } else {
+      searchInput.classList.remove('opacity-100', 'scale-100');
+      searchInput.classList.add('opacity-0', 'scale-95');
+      searchInput.value = '';
+      searchResultsSection.classList.add('hidden');
+      animeSection.classList.remove('hidden');
+    }
+  });
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    const allCards = document.querySelectorAll('.card');
+    resultsContainer.innerHTML = '';
+    const shownTitles = new Set();
+    let matches = 0;
+    allCards.forEach(card => {
+      const title = card.querySelector('h3')?.innerText.toLowerCase() || '';
+      const genres = card.querySelector('p')?.innerText.toLowerCase() || '';
+      if ((title.includes(query) || genres.includes(query)) && !shownTitles.has(title)) {
+        const clone = card.cloneNode(true);
+        resultsContainer.appendChild(clone);
+        shownTitles.add(title);
+        matches++;
+      }
+    });
+
+    if (matches > 0) {
+      animeSection.classList.add('hidden');
+      searchResultsSection.classList.remove('hidden');
+    } else {
+      resultsContainer.innerHTML = '<p class="text-gray-400">No results found.</p>';
+      animeSection.classList.add('hidden');
+      searchResultsSection.classList.remove('hidden');
+    }
+
+    lucide.createIcons();
+  });
+
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    updateThemeIcon();
+  });
+
+  function updateThemeIcon() {
+    themeIcon.setAttribute('data-lucide', document.body.classList.contains('dark') ? 'sun' : 'moon');
+    lucide.createIcons();
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+    updateThemeIcon();
+  });
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  overlay.addEventListener('click', () => {
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

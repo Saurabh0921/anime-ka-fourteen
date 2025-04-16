@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Naruto - AKF Anime</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+.bg-light, .text-light, .dark\:bg-gray-800, .dark\:text-white {
+  transition: background-color 0.3s ease-in, color 0.3s ease-out;
+}
+
+    body.dark {
+      background-color: #111827;
+      color: white;
+    }
+    
+    .episode-card {
+  transition: transform 0.3s ease-in-out;
+}
+
+.group:hover .episode-card {
+  transform: scale(1.02);
+  z-index: 10;
+}
+
+.episode-modal {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.bg-light {
+  background-color: #f9fafb;
+}
+
+.dark .bg-light {
+  background-color: #1e293b;
+}
+.text-light {
+  color: #1f2937;
+}
+
+.dark .text-light {
+  color: white;
+}
+.dark #sidebar a {
+  color: white;
+}
+
+.group:hover .episode-card {
+  transform: scale(1.02);
+  z-index: 10;
+  filter: brightness(80%) blur(1px);
+}
+  </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-[#0f172a] dark:text-white transition-colors duration-100">
+
+<!-- Navbar -->
+<nav class="flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 shadow text-gray-900 dark:text-white relative">
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white z-10">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+    <a href="akf.html" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+  </div>
+  <div id="searchBarWrapper" class="absolute inset-0 flex justify-center items-center pointer-events-none">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Search..."
+      class="w-2/3 md:w-1/3 px-4 py-2 rounded-full border-none outline-none text-black dark:text-white bg-gray-200 dark:bg-gray-700 opacity-0 scale-95 transition-all duration-300 pointer-events-auto"
+    />
+  </div>
+  <div class="flex items-center gap-4 z-10">
+    <button id="searchToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+      <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+    </button>
+    <button id="themeToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+      <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-48 bg-gray-200 dark:bg-gray-800 p-4 space-y-4 z-50 transform -translate-x-full transition-transform duration-300">
+  <a href="akf.html#home" class="block font-semibold hover:underline">Home</a>
+  <a href="akf.html#popular" class="block font-semibold hover:underline">Popular</a>
+  <a href="akf.html#genres" class="block font-semibold hover:underline">Genres</a>
+  <a href="akf.html#settings" class="block font-semibold hover:underline">Settings</a>
+</aside>
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+  <!-- Content -->
+  <main id="mainContent" class="p-4 max-w-3xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+      <img src="https://via.placeholder.com/200" alt="Naruto" class="rounded-xl shadow w-full md:w-1/3" />
+      <div>
+        <h2 class="text-2xl font-bold mb-2">Naruto</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Genres: Action, Ninja, Adventure</p>
+        <p class="text-base leading-relaxed">
+          Naruto follows the journey of Naruto Uzumaki, a spirited ninja who seeks recognition and dreams of becoming the strongest leader of his village, the Hokage. Along his path, he encounters powerful foes, forms strong bonds, and discovers the importance of friendship, perseverance, and legacy.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold mb-2">More Info</h3>
+      <ul class="list-disc list-inside space-y-1 text-sm">
+        <li>Episodes: 220 (Naruto) + 500 (Shippuden)</li>
+        <li>Status: Completed</li>
+        <li>Studio: Pierrot</li>
+        <li>Original Run: 2002 – 2017</li>
+      </ul>
+    </div>
+  </main>
+  
+  <!-- Episodes Section -->
+<section class="p-4 max-w-4xl mx-auto mt-10">
+  <h3 class="text-2xl font-bold mb-4">Episodes</h3>
+  
+  <!-- Filter Dropdown -->
+  <div class="sticky top-4 bg-white dark:bg-[#0f172a] z-30 p-2 rounded shadow mb-4">
+  <label for="episodeFilter" class="block font-semibold mb-1">Filter by Arc:</label>
+  <select id="episodeFilter" class="w-full md:w-1/3 p-2 rounded bg-gray-200 dark:bg-gray-700 text-black dark:text-white">
+    <option value="all">All</option>
+    <option value="waves">Land of Waves</option>
+    <option value="chunin">Chunin Exams</option>
+    <option value="konohaDestruction">Knonoha Destruction</option>
+    <option value="itachi">Itachi</option>
+    <option value="tsunade">Search for Tsunade</option>
+    <option value="sasukeRetrival">Sasuke Retrieval</option>
+    <option value="filler">Fillers</option>
+  </select>
+</div><!-- Episode Cards with Thumbnails and Arc Tags --><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+  <!-- Episodes 1–19: Land of Waves -->
+  <!-- Episode cards generated dynamically below -->
+  <!-- Episode 1–19: data-arc="waves" -->
+  <!-- Episode 20: data-arc="chunin" -->
+  <!-- Replacing placeholders with real titles and descriptions -->
+  <!-- BEGIN EPISODES -->
+ 
+</section>
+<button id="scrollTopBtn" class="hidden fixed bottom-6 right-6 bg-orange-500 text-black p-3 rounded-full shadow-lg hover:bg-orange-600 transition duration-300 z-50">
+  ↑
+</button>
+
+<script>
+ const episodes = [
+  { num: 1, title: "Enter Naruto Uzumaki!", desc: "Naruto dreams of becoming Hokage and gaining recognition.", arc: "waves" },
+  { num: 2, title: "My Name is Konohamaru!", desc: "Naruto meets the Third Hokage’s grandson.", arc: "waves" },
+  { num: 3, title: "Sasuke and Sakura: Friends or Foes?", desc: "Team 7 is formed and meets Kakashi.", arc: "waves" },
+  { num: 4, title: "Pass or Fail: Survival Test", desc: "Team 7 faces Kakashi's bell test.", arc: "waves" },
+  { num: 5, title: "You Failed! Kakashi's Final Decision", desc: "Team 7 learns the value of teamwork.", arc: "waves" },
+  { num: 6, title: "A Dangerous Mission! Journey to the Land of Waves!", desc: "Team 7 takes on a real mission.", arc: "waves" },
+  { num: 7, title: "The Assassin of the Mist!", desc: "Zabuza attacks Team 7 on a bridge.", arc: "waves" },
+  { num: 8, title: "The Oath of Pain", desc: "Naruto vows to never run away again.", arc: "waves" },
+  { num: 9, title: "Kakashi: Sharingan Warrior!", desc: "Kakashi uses his Sharingan on Zabuza.", arc: "waves" },
+  { num: 10, title: "The Forest of Chakra", desc: "Team 7 trains in chakra control.", arc: "waves" },
+  { num: 11, title: "The Land Where a Hero Once Lived", desc: "Naruto hears Inari’s story.", arc: "waves" },
+  { num: 12, title: "Battle on the Bridge! Zabuza Returns!", desc: "The final battle with Zabuza begins.", arc: "waves" },
+  { num: 13, title: "Haku's Secret Jutsu: Crystal Ice Mirrors", desc: "Haku traps Naruto and Sasuke.", arc: "waves" },
+  { num: 14, title: "The Number One Hyperactive, Knucklehead Ninja Joins the Fight!", desc: "Naruto joins the battle.", arc: "waves" },
+  { num: 15, title: "Zero Visibility: The Sharingan Shatters", desc: "Kakashi struggles with Zabuza.", arc: "waves" },
+  { num: 16, title: "The Broken Seal", desc: "Naruto unleashes the Nine-Tails.", arc: "waves" },
+  { num: 17, title: "White Past: Hidden Ambition", desc: "Haku’s tragic backstory is revealed.", arc: "waves" },
+  { num: 18, title: "The Weapons Known as Shinobi", desc: "Naruto and Haku battle ideologies.", arc: "waves" },
+  { num: 19, title: "The Demon in the Snow", desc: "Zabuza makes a final stand.", arc: "waves" },
+  { num: 20, title: "A New Chapter Begins: The Chunin Exam!", desc: "The Chunin Exams begin.", arc: "chunin" },
+  { num: 21, title: "Identify Yourself: Powerful New Rivals", desc: "New ninja teams arrive.", arc: "chunin" },
+  { num: 22, title: "Chunin Challenge: Rock Lee vs. Sasuke!", desc: "Rock Lee challenges Sasuke.", arc: "chunin" },
+  { num: 23, title: "Genin Takedown! All Nine Rookies Face Off!", desc: "Tension builds among rookies.", arc: "chunin" },
+  { num: 24, title: "Start Your Engines: The Chunin Exam Begins!", desc: "The first written test begins.", arc: "chunin" },
+  { num: 25, title: "The Tenth Question: All or Nothing!", desc: "Naruto’s resolve inspires others.", arc: "chunin" },
+  { num: 26, title: "Special Report: Live from the Forest of Death!", desc: "A recap-style special.", arc: "chunin" },
+  { num: 27, title: "The Chunin Exam Stage 2: The Forest of Death", desc: "Team 7 enters the forest.", arc: "chunin" },
+  { num: 28, title: "Eat or Be Eaten: Panic in the Forest", desc: "Ambushes threaten the team.", arc: "chunin" },
+  { num: 29, title: "Naruto's Counterattack: Never Give In!", desc: "Naruto stands his ground.", arc: "chunin" },
+  { num: 30, title: "The Sharingan Revived: Dragon Flame Jutsu!", desc: "Sasuke shows off his new jutsu.", arc: "chunin" },
+  { num: 31, title: "Bushy Brow’s Pledge: Undying Love and Protection", desc: "Lee defends Sakura.", arc: "chunin" },
+  { num: 32, title: "Sakura Blossoms!", desc: "Sakura makes a stand to protect her friends.", arc: "chunin" },
+  { num: 33, title: "Battle Formation: Ino-Shika-Cho!", desc: "Ino’s team comes to Sakura’s aid.", arc: "chunin" },
+  { num: 34, title: "Akamaru Trembles: Gaara’s Cruel Strength!", desc: "Gaara demonstrates terrifying power.", arc: "chunin" },
+  { num: 35, title: "The Scroll’s Secret: No Peeking Allowed", desc: "Team 7 uncovers the secret of the scroll.", arc: "chunin" },
+  { num: 36, title: "Clone vs. Clone: Mine are Better than Yours!", desc: "Team 7 fights clones of themselves.", arc: "chunin" },
+  { num: 37, title: "Surviving the Cut! The Rookie Nine Together Again!", desc: "The teams that passed reunite.", arc: "chunin" },
+  { num: 38, title: "Narrowing the Field: Sudden Death Elimination!", desc: "The third exam preliminaries begin.", arc: "chunin" },
+  { num: 39, title: "Bushy Brow’s Jealousy: Lions Barrage Unleashed!", desc: "Sasuke reveals a new move.", arc: "chunin" },
+  { num: 40, title: "Kakashi and Orochimaru: Face-to-Face!", desc: "Kakashi confronts Orochimaru.", arc: "chunin" },
+  { num: 41, title: "Kunoichi Rumble: The Rivals Get Serious!", desc: "Ino and Sakura face off.", arc: "chunin" },
+  { num: 42, title: "The Ultimate Battle: Cha!", desc: "Sakura and Ino fight to a draw.", arc: "chunin" },
+  { num: 43, title: "Killer Kunoichi and a Shaky Shikamaru", desc: "Shikamaru shows off strategy.", arc: "chunin" },
+  { num: 44, title: "Akamaru Unleashed! Who's Top Dog Now?", desc: "Kiba and Akamaru vs. Naruto.", arc: "chunin" },
+  { num: 45, title: "Surprise Attack! Naruto’s Secret Weapon!", desc: "Naruto wins unexpectedly.", arc: "chunin" },
+  { num: 46, title: "Byakugan Battle: Hinata Grows Bold!", desc: "Hinata vs. Neji begins.", arc: "chunin" },
+  { num: 47, title: "A Failure’s True Power", desc: "Hinata shows her resolve.", arc: "chunin" },
+  { num: 48, title: "Gaara vs. Rock Lee: The Power of Youth Explodes!", desc: "Lee and Gaara clash fiercely.", arc: "chunin" },
+  { num: 49, title: "Lee’s Hidden Strength: Forbidden Secret Jutsu!", desc: "Lee opens the inner gates.", arc: "chunin" },
+  { num: 50, title: "The Fifth Gate: A Splendid Ninja is Born", desc: "Lee gives his all against Gaara.", arc: "chunin" },
+  { num: 51, title: "A Shadow in Darkness: Danger Approaches Sasuke", desc: "Sasuke senses an ominous threat lurking nearby.", arc: "chunin" },
+{ num: 52, title: "Ebisu Returns: Naruto’s Toughest Training Yet!", desc: "Naruto's training intensifies under Ebisu's watch.", arc: "chunin" },
+{ num: 53, title: "Long Time No See: Jiraiya Returns!", desc: "Naruto is introduced to the legendary toad sage, Jiraiya.", arc: "chunin" },
+{ num: 54, title: "The Summoning Jutsu: Wisdom of the Toad Sage!", desc: "Jiraiya begins Naruto's training in summoning jutsu.", arc: "chunin" },
+{ num: 55, title: "A Feeling of Yearning, A Flower Full of Hope", desc: "Sakura reflects on her growing feelings for Sasuke.", arc: "chunin" },
+{ num: 56, title: "Live or Die: Risk it All to Win it All!", desc: "Naruto pushes his limits during intense training.", arc: "chunin" },
+{ num: 57, title: "He Flies! He Jumps! He Lurks! Chief Toad Appears!", desc: "Naruto successfully summons the powerful Gamabunta.", arc: "chunin" },
+{ num: 58, title: "Hospital Besieged: The Evil Hand Revealed!", desc: "Orochimaru makes his move on Sasuke in the hospital.", arc: "chunin" },
+{ num: 59, title: "The Final Rounds: Rush to the Battle Arena!", desc: "Excitement builds as the final Chunin Exams begin.", arc: "chunin" },
+{ num: 60, title: "Byakugan vs. Shadow Clone Jutsu!", desc: "Naruto faces Neji in an epic showdown.", arc: "chunin" },
+{ num: 61, title: "Ultimate Defense: Zero Blind Spot!", desc: "Neji shows off the true power of the Byakugan.", arc: "chunin" },
+{ num: 62, title: "A Failure's True Power", desc: "Naruto proves his strength, defeating Neji with wit and willpower.", arc: "chunin" },
+{ num: 63, title: "Hit It or Quit It: The Final Rounds Get Complicated!", desc: "Gaara and Sasuke's match causes a stir.", arc: "chunin" },
+{ num: 64, title: "Zero Motivation: The Guy with Cloud Envy!", desc: "Shikamaru reluctantly enters his match.", arc: "chunin" },
+{ num: 65, title: "Dancing Leaf, Squirming Sand", desc: "Sasuke and Gaara clash in a high-speed battle.", arc: "chunin" },
+{ num: 66, title: "Bushy Brow’s Jutsu: Sasuke Style!", desc: "Sasuke reveals his new Chidori technique.", arc: "chunin" },
+{ num: 67, title: "Late for the Show, But Ready to Go! The Ultimate Secret Technique is Born!", desc: "Sasuke unleashes Chidori to counter Gaara’s sand.", arc: "chunin" },
+{ num: 68, title: "Zero Hour! The Destruction of the Hidden Leaf Village Begins!", desc: "Orochimaru’s invasion of Konoha is set in motion.", arc: "konohaDestruction" },
+{ num: 69, title: "Village in Distress: A New A-Ranked Mission!", desc: "The invasion causes chaos as the Leaf fights back.", arc: "konohaDestruction" },
+{ num: 70, title: "A Shirker’s Call to Action: Layabout No More!", desc: "Shikamaru proves his tactical genius.", arc: "konohaDestruction" },
+{ num: 71, title: "An Unrivaled Match: Hokage Battle Royale!", desc: "Hiruzen faces off against Orochimaru and the reanimated Hokage.", arc: "konohaDestruction" },
+{ num: 72, title: "A Mistake from the Past: A Face Revealed!", desc: "Orochimaru's past is revealed during the Hokage fight.", arc: "konohaDestruction" },
+{ num: 73, title: "Forbidden Secret Technique: Reaper Death Seal!", desc: "The Third Hokage prepares a deadly sealing technique.", arc: "konohaDestruction" },
+{ num: 74, title: "Astonishing Truth! Gaara’s Identity Emerges!", desc: "Gaara's childhood trauma is unveiled.", arc: "konohaDestruction" },
+{ num: 75, title: "Sasuke’s Decision: Push to the Edge!", desc: "Sasuke pursues Gaara to settle the score.", arc: "konohaDestruction" },
+{ num: 76, title: "Assassin of the Moonlit Night", desc: "Gaara begins to lose control of the One-Tail.", arc: "konohaDestruction" },
+{ num: 77, title: "Light vs. Dark: The Two Faces of Gaara", desc: "Naruto confronts Gaara and his inner monster.", arc: "konohaDestruction" },
+{ num: 78, title: "Naruto’s Ninja Handbook", desc: "Naruto channels the power of his determination.", arc: "konohaDestruction" },
+{ num: 79, title: "Beyond the Limit of Darkness and Light", desc: "Naruto saves both his friends and Gaara from darkness.", arc: "konohaDestruction" },
+{ num: 80, title: "The Third Hokage, Forever...", desc: "The village mourns the loss of Hiruzen Sarutobi.", arc: "konohaDestruction" },
+{ num: 81, title: "Return of the Morning Mist", desc: "Itachi Uchiha makes his ominous return to Konoha.", arc: "itachi" },
+{ num: 82, title: "Eye to Eye: Sharingan vs. Sharingan!", desc: "Kakashi faces off against Itachi and Kisame.", arc: "itachi" },
+{ num: 83, title: "Jiraiya: Naruto’s Potential Disaster!", desc: "Jiraiya saves Naruto and introduces a new journey.", arc: "tsunade" },
+{ num: 84, title: "Roar, Chidori! Brother vs. Brother!", desc: "Sasuke challenges Itachi in a devastating battle.", arc: "itachi" },
+{ num: 85, title: "Hate Among the Uchihas: The Last of the Clan!", desc: "Itachi crushes Sasuke mentally and physically.", arc: "itachi" },
+{ num: 86, title: "A New Training Begins: I Will Be Strong!", desc: "Naruto begins Rasengan training under Jiraiya.", arc: "tsunade" },
+{ num: 87, title: "Keep on Training: Pop Goes the Water Balloon!", desc: "Naruto struggles to master the Rasengan.", arc: "tsunade" },
+{ num: 88, title: "Focal Point: The Mark of the Leaf", desc: "Naruto progresses in his Rasengan training.", arc: "tsunade" },
+{ num: 89, title: "An Impossible Choice: The Pain Within Tsunade’s Heart", desc: "Tsunade’s tragic past influences her decision.", arc: "tsunade" },
+{ num: 90, title: "Unforgivable! A Total Lack of Respect!", desc: "Tsunade reacts to Naruto’s dreams and promise.", arc: "tsunade" },
+{ num: 91, title: "Inheritance! The Necklace of Death!", desc: "Naruto wins Tsunade’s respect and a powerful gift.", arc: "tsunade" },
+{ num: 92, title: "A Dubious Offer! Tsunade's Choice", desc: "Tsunade is forced to choose between Konoha and Orochimaru.", arc: "tsunade" },
+{ num: 93, title: "Breakdown! The Deal is Off!", desc: "Tsunade refuses Orochimaru, sparking conflict.", arc: "tsunade" },
+{ num: 94, title: "Attack! Fury of the Rasengan!", desc: "Naruto successfully lands the Rasengan in battle.", arc: "tsunade" },
+{ num: 95, title: "The Fifth Hokage! A Life on the Line!", desc: "Tsunade accepts her role as Hokage after a fierce battle.", arc: "tsunade" },
+{ num: 96, title: "Deadlock! Sannin Showdown!", desc: "Jiraiya, Orochimaru, and Tsunade clash in a legendary battle.", arc: "tsunade" },
+{ num: 97, title: "Kidnapped! Naruto’s Hot Spring Adventure!", desc: "Naruto gets caught up in a hot spring mishap.", arc: "filler" },
+{ num: 98, title: "Tsunade’s Warning: Ninja No More!", desc: "Tsunade gives Naruto a stern warning about future battles.", arc: "tsunade" },
+{ num: 99, title: "The Will of Fire Still Burns!", desc: "Naruto and friends reaffirm their beliefs.", arc: "tsunade" },
+{ num: 100, title: "Sensei and Student: The Bond of the Shinobi", desc: "Kakashi and Naruto reflect on the path ahead.", arc: "tsunade" },
+{ num: 101, title: "Gotta See! Gotta Know! Kakashi-Sensei's True Face!", desc: "Naruto, Sasuke, and Sakura try to see Kakashi’s face.", arc: "filler" },
+{ num: 102, title: "Mission: Help an Old Friend in the Land of Tea", desc: "Team 7 gets a new mission in the Land of Tea.", arc: "filler" },
+{ num: 103, title: "The Race is On! Trouble on the High Seas!", desc: "Naruto and team escort Idate in a dangerous race.", arc: "filler" },
+{ num: 104, title: "Run Idate Run! Nagi Island Awaits!", desc: "Idate’s determination is tested.", arc: "filler" },
+{ num: 105, title: "A Fierce Battle of Rolling Thunder!", desc: "Naruto fights to protect Idate’s mission.", arc: "filler" },
+{ num: 106, title: "The Last Leg: A Final Act of Desperation", desc: "The race reaches its conclusion.", arc: "filler" },
+{ num: 107, title: "The Battle Begins: Naruto vs. Sasuke", desc: "Naruto confronts Sasuke at the hospital rooftop.", arc: "sasukeRetrival" },
+{ num: 108, title: "Bitter Rivals and Broken Bonds", desc: "Sasuke wrestles with his frustration as Naruto grows stronger.", arc: "sasukeRetrival" },
+{ num: 109, title: "An Invitation from the Sound", desc: "The Sound Four offer Sasuke the power he desires.", arc: "sasukeRetrival" },
+{ num: 110, title: "Formation! The Sasuke Retrieval Squad", desc: "Shikamaru forms a team to bring Sasuke back.", arc: "sasukeRetrival" },
+{ num: 111, title: "Sound vs. Leaf", desc: "The Sound Four confront Shikamaru’s team at the border.", arc: "sasukeRetrival" },
+{ num: 112, title: "Squad Mutiny: Everything Falls Apart!", desc: "Kiba, Naruto, and others prepare for their toughest mission yet.", arc: "sasukeRetrival" },
+{ num: 113, title: "Full Throttle Power! Choji Ablaze!", desc: "Choji uses forbidden pills to defeat Jirobo.", arc: "sasukeRetrival" },
+{ num: 114, title: "Goodbye Old Friend…! I’ll Always Believe in You!", desc: "Choji wins his battle, but at a great cost.", arc: "sasukeRetrival" },
+{ num: 115, title: "Your Opponent is Me!", desc: "Neji steps up to face Kidomaru alone.", arc: "sasukeRetrival" },
+{ num: 116, title: "360 Degrees of Vision: The Byakugan’s Blind Spot!", desc: "Kidomaru targets Neji’s weakness in a deadly match.", arc: "sasukeRetrival" },
+{ num: 117, title: "Losing is Not an Option!", desc: "Neji takes a fatal risk to ensure victory.", arc: "sasukeRetrival" },
+{ num: 118, title: "The Vessel Arrives Too Late", desc: "Sasuke emerges transformed after absorbing Orochimaru’s power.", arc: "sasukeRetrival" },
+{ num: 119, title: "Miscalculation: A New Enemy Appears!", desc: "Kimimaro enters the fray, blocking the Leaf ninja’s path.", arc: "sasukeRetrival" },
+{ num: 120, title: "Roar and Howl! The Ultimate Tag Team!", desc: "Kiba and Akamaru fight Sakon and Ukon.", arc: "sasukeRetrival" },
+{ num: 121, title: "To Each His Own Battle", desc: "The team splits to battle the Sound Four individually.", arc: "sasukeRetrival" },
+{ num: 122, title: "Fakeout: Shikamaru’s Comeback!", desc: "Shikamaru counters Tayuya’s genjutsu.", arc: "sasukeRetrival" },
+{ num: 123, title: "The Leaf’s Handsome Devil!", desc: "Rock Lee arrives to fight Kimimaro.", arc: "sasukeRetrival" },
+{ num: 124, title: "The Beast Within", desc: "Lee drinks 'medicine' and unleashes drunken fists.", arc: "sasukeRetrival" },
+{ num: 125, title: "The Sand Shinobi: Allies of the Leaf", desc: "Gaara, Temari, and Kankuro join the battle to assist the Leaf.", arc: "sasukeRetrival" },
+{ num: 126, title: "Showdown: Gaara vs. Kimimaro!", desc: "Gaara battles Kimimaro using his ultimate defense.", arc: "sasukeRetrival" },
+{ num: 127, title: "Vengeful Strike! The Bracken Dance!", desc: "Kimimaro unleashes his deadliest attack.", arc: "sasukeRetrival" },
+{ num: 128, title: "A Cry on Deaf Ears", desc: "Naruto chases Sasuke and pleads for his return.", arc: "sasukeRetrival" },
+{ num: 129, title: "Brothers: Distance Among the Uchiha", desc: "Sasuke recalls Itachi’s betrayal and his past.", arc: "sasukeRetrival" },
+{ num: 130, title: "Father and Son, the Broken Crest", desc: "Sasuke remembers his father’s words and his family's tragedy.", arc: "sasukeRetrival" },
+{ num: 131, title: "The Secrets of the Mangekyō Sharingan!", desc: "Itachi’s true power and the cost of vengeance are revealed.", arc: "sasukeRetrival" },
+{ num: 132, title: "For a Friend", desc: "Naruto unleashes the Nine-Tails in an emotional showdown.", arc: "sasukeRetrival" },
+{ num: 133, title: "A Plea from a Friend", desc: "Naruto desperately fights to save Sasuke from darkness.", arc: "sasukeRetrival" },
+{ num: 134, title: "The End of Tears", desc: "Sasuke defeats Naruto and walks away from the Leaf.", arc: "sasukeRetrival" },
+{ num: 135, title: "The Promise That Could Not Be Kept", desc: "Naruto wakes in the hospital, crushed by failure.", arc: "sasukeRetrival" },
+{ num: 136, title: "Deep Cover!? A Super S-Ranked Mission!", desc: "Jiraiya investigates Orochimaru while Naruto trains.", arc: "filler" },
+{ num: 137, title: "A Town of Outlaws, The Shadow of the Fuma Clan", desc: "Naruto meets a girl named Sasame from the Fuma clan.", arc: "filler" },
+{ num: 138, title: "Pure Betrayal and a Fleeting Plea!", desc: "Arashi's shocking secret is revealed.", arc: "filler" },
+{ num: 139, title: "Terror! Orochimaru’s Mansion!", desc: "The group infiltrates Orochimaru’s hideout.", arc: "filler" },
+{ num: 140, title: "Two Heartbeats: Kabuto’s Trap", desc: "Kabuto's deadly medical jutsu challenges the team.", arc: "filler" },
+{ num: 141, title: "Sakura’s Determination", desc: "Sakura seeks Tsunade’s help to grow stronger.", arc: "filler" },
+{ num: 142, title: "The Three Villains from the Maximum Security Prison", desc: "Three escaped prisoners threaten Konoha.", arc: "filler" },
+{ num: 143, title: "Tonton! I’m Counting on You!", desc: "Naruto and Tonton search for Tsunade.", arc: "filler" },
+{ num: 144, title: "A New Squad! Two People and a Dog?!", desc: "Naruto teams up with Kiba and Akamaru.", arc: "filler" },
+{ num: 145, title: "A New Formation: Ino-Shika-Cho!", desc: "Ino, Shikamaru, and Choji support Naruto on a mission.", arc: "filler" },
+{ num: 146, title: "Orochimaru’s Shadow", desc: "The team discovers a new threat tied to Orochimaru.", arc: "filler" },
+{ num: 147, title: "A Clash of Fate: You Can’t Bring Me Down", desc: "Naruto confronts an enemy ninja with a familiar story.", arc: "filler" },
+{ num: 148, title: "Search for the Rare Bikochu Beetle", desc: "Team 8 helps Naruto track a special insect.", arc: "filler" },
+{ num: 149, title: "What’s the Difference? Don’t All Insects Look Alike?", desc: "The Bikochu mission grows more complicated.", arc: "filler" },
+{ num: 150, title: "A Battle of Bugs: The Deceivers and the Deceived", desc: "Shino leads the battle using clever insect strategy.", arc: "filler" },
+{ num: 151, title: "Blaze Away Byakugan! This is My Ninja Way!", desc: "Hinata trains hard to prove herself on a mission.", arc: "filler" },
+{ num: 152, title: "Funeral March for the Living", desc: "A mysterious boy draws Hinata into danger.", arc: "filler" },
+{ num: 153, title: "A Lesson Learned: Iron Fist of Love", desc: "Rock Lee mentors a troubled young ninja.", arc: "filler" },
+{ num: 154, title: "The Enemy of the Byakugan", desc: "The Byakugan’s secrets attract a deadly enemy.", arc: "filler" },
+{ num: 155, title: "The Dark Creeping Clouds", desc: "Hinata faces her doubts as the mission intensifies.", arc: "filler" },
+{ num: 156, title: "Raiga’s Counterattack", desc: "The battle against Raiga of the Seven Swordsmen begins.", arc: "filler" },
+{ num: 157, title: "Run! The Curry of Life!", desc: "Rock Lee recovers with spicy curry and returns to the fight.", arc: "filler" },
+{ num: 158, title: "Open for Business! The Leaf Moving Service", desc: "Naruto helps a family relocate under threat.", arc: "filler" },
+{ num: 159, title: "The Bounty Hunter from the Wilderness", desc: "Naruto joins forces with a rogue bounty hunter.", arc: "filler" },
+{ num: 160, title: "Hunt or Be Hunted?! Showdown at the O.K. Temple!", desc: "Naruto is caught in a deadly game of cat and mouse.", arc: "filler" },
+{ num: 161, title: "The Appearance of Strange Visitors", desc: "A group of odd travelers comes to the village.", arc: "filler" },
+{ num: 162, title: "The Cursed Warrior", desc: "Naruto investigates a ghostly samurai haunting a village.", arc: "filler" },
+{ num: 163, title: "The Tactician’s Intent", desc: "The team uncovers the secret behind the curse.", arc: "filler" },
+{ num: 164, title: "Too Late for Help", desc: "Naruto fights to save the villagers from corruption.", arc: "filler" },
+{ num: 165, title: "The Death of Naruto", desc: "Naruto is presumed dead during a mission gone wrong.", arc: "filler" },
+{ num: 166, title: "When Time Stands Still", desc: "Tenten and Neji race to uncover the truth.", arc: "filler" },
+{ num: 167, title: "When Egrets Flap Their Wings", desc: "The team brings justice to the cursed land.", arc: "filler" },
+{ num: 168, title: "Mix It, Stretch It, Boil It Up! Burn, Copper Pot, Burn!", desc: "Naruto joins a ramen cooking competition.", arc: "filler" },
+{ num: 169, title: "Remembrance: The Lost Page", desc: "Naruto helps a novelist rediscover his story.", arc: "filler" },
+{ num: 170, title: "The Closed Door", desc: "Naruto trains harder after being rejected for a mission.", arc: "filler" },
+{ num: 171, title: "Infiltration: The Set-Up!", desc: "Naruto joins a team to infiltrate a hidden fortress.", arc: "filler" },
+{ num: 172, title: "Despair: A Fractured Heart", desc: "Tensions rise inside the enemy base.", arc: "filler" },
+{ num: 173, title: "The Battle at Sea: The Power Unleashed!", desc: "Naruto’s team battles rogue ninja on a ship.", arc: "filler" },
+{ num: 174, title: "Impossible! Celebrity Ninja Art – Money Style Jutsu!", desc: "Naruto helps a struggling actress during a chaotic mission.", arc: "filler" },
+{ num: 175, title: "The Treasure Hunt is On!", desc: "Naruto searches for a legendary treasure.", arc: "filler" },
+{ num: 176, title: "Run, Dodge, Zigzag! Chase or Be Chased!", desc: "Naruto chases a thief through town in a wild mission.", arc: "filler" },
+{ num: 177, title: "Please, Mr. Postman!", desc: "Naruto and team escort a clumsy postman.", arc: "filler" },
+{ num: 178, title: "Encounter! The Boy with a Star’s Name", desc: "Team 7 investigates a hidden village with a mysterious star.", arc: "starVillage" },
+{ num: 179, title: "The Remembered Lullaby", desc: "The star village’s painful secret is revealed.", arc: "starVillage" },
+{ num: 180, title: "Hidden Jutsu: The Price of the Ninja Art: Kujaku", desc: "Natsuhiboshi’s power threatens the team.", arc: "starVillage" },
+{ num: 181, title: "Hoshikage: The Buried Truth", desc: "The identity of the fake Hoshikage is uncovered.", arc: "starVillage" },
+{ num: 182, title: "Reunion: The Remaining Time", desc: "The star begins to affect Naruto’s chakra.", arc: "starVillage" },
+{ num: 183, title: "The Star’s Radiance", desc: "The village is saved from the star’s curse.", arc: "starVillage" },
+{ num: 184, title: "Kiba’s Long Day!", desc: "Kiba and Akamaru endure a hectic mission together.", arc: "filler" },
+{ num: 185, title: "A Legend from the Hidden Leaf: The Onbaa!", desc: "Naruto gets stuck caring for a strange creature.", arc: "filler" },
+{ num: 186, title: "Laughing Shino", desc: "Naruto tries to make Shino laugh during a mission.", arc: "filler" },
+{ num: 187, title: "Open for Business! Naruto’s Snowball Fight!", desc: "Naruto protects a hot spring from a snowstorm bandit.", arc: "filler" },
+{ num: 188, title: "The Search for the Rare Bikochu: Again!", desc: "Naruto helps search for the Bikochu once more.", arc: "filler" },
+{ num: 189, title: "A Limitless Supply of Ninja Tools", desc: "Naruto investigates a black market weapons factory.", arc: "filler" },
+{ num: 190, title: "The Byakugan Sees the Blind Spot!", desc: "Neji saves the day using his unique vision.", arc: "filler" },
+{ num: 191, title: "Forecast: Death! Cloudy with a Chance of Sunlight", desc: "Naruto protects a young girl whose drawings predict the future.", arc: "filler" },
+{ num: 192, title: "Ino Screams! Chubby Paradise!", desc: "Ino takes the lead in a mission to guard a dieting feudal lord.", arc: "filler" },
+{ num: 193, title: "Viva Dojo Challenge! Youth Is All About Passion!", desc: "Rock Lee challenges a dojo master in a battle of youth.", arc: "filler" },
+{ num: 194, title: "The Mysterious Curse of the Haunted Castle", desc: "Naruto and Kiba investigate a supposedly haunted castle.", arc: "filler" },
+{ num: 195, title: "The Third Super-Beast!", desc: "Team 8 faces a beast user with a surprising connection to Kiba.", arc: "filler" },
+{ num: 196, title: "Hot-Blooded Confrontation: Student vs. Sensei", desc: "Naruto and Iruka are caught in a hostage situation.", arc: "filler" },
+{ num: 197, title: "Crisis! The Hidden Leaf 11 Gather!", desc: "The Leaf 11 must stop a forbidden jutsu from spreading.", arc: "filler" },
+{ num: 198, title: "The Anbu Gives Up? Naruto's Recollection", desc: "Naruto recalls earlier missions while aiding a sick child.", arc: "filler" },
+{ num: 199, title: "The Missed Target", desc: "Naruto defends a village from mysterious bandits.", arc: "filler" },
+{ num: 200, title: "The Powerful Helper", desc: "Naruto receives help from a surprise ally.", arc: "filler" },
+{ num: 201, title: "Multiple Traps! Countdown to Destruction", desc: "The Leaf 11 race to disarm a powerful explosive.", arc: "filler" },
+{ num: 202, title: "The Top 5 Ninja Battles", desc: "A recap episode highlighting major fights.", arc: "filler" },
+{ num: 203, title: "Kurenai’s Decision: Squad 8 Left Behind", desc: "Kurenai resigns as a squad leader for personal reasons.", arc: "filler" },
+{ num: 204, title: "Yakumo’s Sealed Power", desc: "A girl’s suppressed genjutsu causes chaos in Konoha.", arc: "filler" },
+{ num: 205, title: "Kurenai’s Top-Secret Mission: The Promise With the Third Hokage", desc: "Kurenai's tragic past is revealed.", arc: "filler" },
+{ num: 206, title: "Genjutsu or Reality?", desc: "Team 8 struggles in a world where illusions and reality blur.", arc: "filler" },
+{ num: 207, title: "The Supposed Sealed Ability", desc: "Yakumo's power threatens the village’s safety.", arc: "filler" },
+{ num: 208, title: "The Weight of the Prized Artifact!", desc: "Naruto helps escort a legendary painting with secret power.", arc: "filler" },
+{ num: 209, title: "The Enemy: Ninja Dropouts", desc: "Naruto’s team battles rogue ninja academy dropouts.", arc: "filler" },
+{ num: 210, title: "The Bewildering Forest", desc: "A mysterious forest shifts reality around Naruto’s team.", arc: "filler" },
+{ num: 211, title: "Memory of Flames", desc: "A hidden village's betrayal tests the Leaf team.", arc: "filler" },
+{ num: 212, title: "To Each His Own Path", desc: "The mission ends with Naruto understanding deeper purpose.", arc: "filler" },
+{ num: 213, title: "Vanished Memories", desc: "Naruto helps a girl uncover her forgotten past.", arc: "filler" },
+{ num: 214, title: "Bringing Back Reality", desc: "The truth behind the girl's memory loss emerges.", arc: "filler" },
+{ num: 215, title: "A Past to Be Erased", desc: "Naruto faces a tragic memory manipulation technique.", arc: "filler" },
+{ num: 216, title: "The Targeted Shukaku", desc: "Gaara is attacked by a group seeking his tailed beast.", arc: "filler" },
+{ num: 217, title: "Sand Alliance with the Leaf Shinobi", desc: "The Sand and Leaf work together to stop the threat.", arc: "filler" },
+{ num: 218, title: "The Counterattack!", desc: "Gaara and Naruto lead the charge against the enemy.", arc: "filler" },
+{ num: 219, title: "The Ultimate Weapon Reborn", desc: "The villains awaken a deadly puppet weapon.", arc: "filler" },
+{ num: 220, title: "Departure", desc: "Naruto leaves with Jiraiya to begin a new journey.", arc: "transition" },
+  
+];
+
+  const container = document.querySelector(".grid.grid-cols-1");
+  container.innerHTML = "";
+
+  episodes.forEach(ep => {
+   container.innerHTML += `
+  <div class="group relative overflow-hidden h-36 rounded-2xl shadow-md bg-light dark:bg-[#1e293b] transition-transform duration-300 hover:scale-[1.01]" data-arc="${ep.arc}">
+    
+    <!-- Default View: Thumbnail + Title -->
+    <div class="flex items-center gap-4 p-4 h-full transition-opacity duration-300 group-hover:opacity-0">
+      <img src="https://via.placeholder.com/80x60?text=Ep+${ep.num}" 
+           alt="Episode ${ep.num} Thumbnail" 
+           class="w-20 h-16 object-cover rounded-md" />
+    <h4 class="text-base font-semibold transition-all text-black dark:text-white" style="color: inherit;">
+  Episode ${ep.num}: ${ep.title}
+</h4>
+    </div>
+
+    <!-- Hover View: Description -->
+    <div class="absolute inset-0 flex items-center justify-center p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center">
+     <p class="text-sm text-light leading-snug">
+        ${ep.desc}
+      </p>
+    </div>
+
+  </div>`;
+  });
+
+  // FILTER logic AFTER rendering
+  const filterDropdown = document.getElementById("episodeFilter");
+  filterDropdown.addEventListener("change", () => {
+    const selectedArc = filterDropdown.value;
+    const episodeCards = document.querySelectorAll("[data-arc]");
+    episodeCards.forEach(card => {
+      card.style.display = selectedArc === "all" || card.dataset.arc === selectedArc ? "block" : "none";
+    });
+  });
+  
+  // Scroll to top
+const scrollBtn = document.getElementById("scrollTopBtn");
+window.addEventListener("scroll", () => {
+  scrollBtn.classList.toggle("hidden", window.scrollY < 300);
+});
+scrollBtn.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+</script>
+  <!-- Scripts -->
+  <script>
+    
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const searchToggle = document.getElementById('searchToggle');
+  const searchInput = document.getElementById('searchInput');
+  const siteTitle = document.querySelector('nav a');
+  let searchOpen = false;
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  overlay.addEventListener('click', () => {
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  });
+
+  searchToggle.addEventListener('click', () => {
+    searchOpen = !searchOpen;
+    if (searchOpen) {
+      siteTitle.classList.add('opacity-0', 'pointer-events-none');
+      searchInput.classList.remove('opacity-0', 'scale-95');
+      searchInput.classList.add('opacity-100', 'scale-100');
+      searchInput.focus();
+    } else {
+      siteTitle.classList.remove('opacity-0', 'pointer-events-none');
+      searchInput.classList.remove('opacity-100', 'scale-100');
+      searchInput.classList.add('opacity-0', 'scale-95');
+      searchInput.value = '';
+    }
+  });
+
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    function updateThemeIcon() {
+      themeIcon.setAttribute('data-lucide', document.body.classList.contains('dark') ? 'sun' : 'moon');
+      lucide.createIcons();
+    }
+
+    themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  updateThemeIcon();
+});
+
+    window.addEventListener('DOMContentLoaded', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.add('hidden');
+  
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+
+  updateThemeIcon();
+});
+  </script>
+  
+  <script>
+  const filterDropdown = document.getElementById("episodeFilter");
+const episodes = document.querySelectorAll("[data-arc]");
+const mainContent = document.getElementById("mainContent");
+
+filterDropdown.addEventListener("change", () => {
+  const selectedArc = filterDropdown.value;
+  episodes.forEach(ep => {
+    ep.style.display = selectedArc === "all" || ep.dataset.arc === selectedArc ? "block" : "none";
+  });
+
+  // Scroll the <main> element to top
+  setTimeout(() => {
+    mainContent.scrollIntoView({ behavior: 'smooth' });
+  }, 100);
+});
+</script>
+<script>
+  // Dark mode toggle logic
+  const themeToggle = document.getElementById("theme-toggle");
+  const htmlEl = document.documentElement;
+
+  // Apply saved theme on load
+  if (localStorage.getItem("theme") === "dark") {
+    htmlEl.classList.add("dark");
+  } else {
+    htmlEl.classList.remove("dark");
+  }
+
+  // Toggle and save
+  themeToggle.addEventListener("click", () => {
+    htmlEl.classList.toggle("dark");
+    localStorage.setItem("theme", htmlEl.classList.contains("dark") ? "dark" : "light");
+  });
+</script>
+</body>
+</html>
+</body>
+</html>

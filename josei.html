@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Josei Anime - AKF</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <style>
+    body.dark {
+      background-color: #111827;
+      color: white;
+    }
+    .card:hover {
+      transform: scale(1.02);
+      transition: 0.3s ease-in-out;
+    }
+    .card-content {
+      display: none;
+    }
+    .card.expanded .card-content {
+      display: block;
+    }
+    #sidebar {
+      transition: transform 0.3s ease-in-out;
+    }
+    .bg-light {
+      background-color: #f9fafb;
+      color: #1f2937;
+    }
+    .dark .bg-light {
+      background-color: #1f2937;
+      color: white;
+    }
+    .dark .text-gray-900 {
+      color: white !important;
+    }
+    .dark .text-gray-500 {
+      color: #9ca3af !important;
+    }
+    .search-bar {
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-white transition-all">
+
+<!-- Navbar -->
+<nav class="flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-800 shadow text-gray-900 dark:text-white relative">
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white z-10">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+    <a href="../akf.html" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+  </div>
+
+  <div id="searchBarWrapper" class="absolute inset-0 flex justify-center items-center pointer-events-none">
+    <input id="searchInput" type="text" placeholder="Search anime..."
+      class="w-2/3 md:w-1/3 px-4 py-2 rounded-full border-none outline-none text-black dark:text-white bg-gray-200 dark:bg-gray-700 opacity-0 scale-95 transition-all duration-300 pointer-events-auto"/>
+  </div>
+
+  <div class="flex items-center gap-4 z-10">
+    <button id="searchToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+      <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+    </button>
+    <button id="themeToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+      <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-48 bg-gray-200 dark:bg-gray-800 p-4 space-y-4 z-50 transform -translate-x-full transition-transform duration-300">
+  <a href="../akf.html#home" class="block font-semibold hover:underline">Home</a>
+  <a href="../akf.html#popular" class="block font-semibold hover:underline">Popular</a>
+  <a href="../akf.html#genres" class="block font-semibold hover:underline">Genres</a>
+  <a href="../akf.html#settings" class="block font-semibold hover:underline">Settings</a>
+</aside>
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+<main class="p-4 max-w-5xl mx-auto">
+
+  <section id="searchResults" class="p-4 hidden">
+    <h2 class="text-2xl font-semibold mb-4">Search Results</h2>
+    <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+  </section>
+
+  <section id="animeSection">
+    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+      <i data-lucide="flower" class="w-6 h-6"></i>
+      Josei Anime
+    </h2>
+
+ <div id="joseiAnimeCards" class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4">
+   
+   
+ </div>
+
+      <!-- Example Josei Anime Card -->
+     <script>
+  const joseiAnimeList = [
+    {
+      title: "Nodame Cantabile",
+      genres: "Josei, Romance, Music",
+      image: "https://cdn.myanimelist.net/images/anime/3/7311.jpg",
+      description: "A quirky pianist and a perfectionist conductor grow together through music and love.",
+      href: "nodame.html"
+    },
+    {
+      title: "Honey and Clover",
+      genres: "Josei, Drama, Slice of Life",
+      image: "https://cdn.myanimelist.net/images/anime/12/6805.jpg",
+      description: "College students deal with love, art, and self-discovery in their youth.",
+      href: "honeyclover.html"
+    },
+    {
+      title: "Paradise Kiss",
+      genres: "Josei, Drama, Fashion",
+      image: "https://cdn.myanimelist.net/images/anime/5/25839.jpg",
+      description: "A high school girl is drawn into the world of fashion and adult relationships.",
+      href: "paradisekiss.html"
+    },
+    {
+      title: "Shouwa Genroku Rakugo Shinjuu",
+      genres: "Josei, Historical, Drama",
+      image: "https://cdn.myanimelist.net/images/anime/10/77957.jpg",
+      description: "The life of a former convict and his path to mastering the art of rakugo storytelling.",
+      href: "rakugo.html"
+    }
+    // Add more josei anime here
+  ];
+
+  const container = document.getElementById("joseiAnimeCards");
+
+  joseiAnimeList.forEach(anime => {
+    const card = document.createElement("a");
+    card.href = anime.href;
+    card.className = "block group";
+    card.innerHTML = `
+  <div class="card bg-light dark:bg-gray-800 p-4 rounded-xl shadow cursor-pointer transform transition-transform group-hover:scale-105">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="font-bold text-lg text-gray-900 dark:text-white">${anime.title}</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400">${anime.genres}</p>
+      </div>
+      <img src="${anime.image}" class="w-20 h-20 object-cover rounded" />
+    </div>
+    <div class="card-content mt-2 text-gray-700 dark:text-gray-300 max-h-0 overflow-hidden transition-all duration-300 group-hover:max-h-40">
+      <p class="mt-2">${anime.description}</p>
+    </div>
+  </div>
+`;
+    container.appendChild(card);
+  });
+</script>
+  </section>
+</main>
+
+<!-- Scroll to Top Button -->
+<button id="scrollTopBtn" title="Go to top"
+  class="fixed bottom-6 right-6 p-3 rounded-full bg-gray-800 text-white dark:bg-white dark:text-black shadow-lg hidden z-50">
+  <i data-lucide="arrow-up" class="w-5 h-5"></i>
+</button>
+
+<script>
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const searchToggle = document.getElementById('searchToggle');
+  const searchInput = document.getElementById('searchInput');
+  const searchResultsSection = document.getElementById('searchResults');
+  const resultsContainer = document.getElementById('resultsContainer');
+  const animeCards = document.getElementById('animeCards');
+  const animeSection = document.getElementById('animeSection');
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+  // Scroll to top
+  window.onscroll = () => {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+      scrollTopBtn.classList.remove('hidden');
+    } else {
+      scrollTopBtn.classList.add('hidden');
+    }
+  };
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Search
+  let searchOpen = false;
+  searchToggle.addEventListener('click', () => {
+    searchOpen = !searchOpen;
+    if (searchOpen) {
+      searchInput.classList.remove('opacity-0', 'scale-95');
+      searchInput.classList.add('opacity-100', 'scale-100');
+      searchInput.focus();
+    } else {
+      searchInput.classList.remove('opacity-100', 'scale-100');
+      searchInput.classList.add('opacity-0', 'scale-95');
+      searchInput.value = '';
+      searchResultsSection.classList.add('hidden');
+      animeSection.classList.remove('hidden');
+    }
+  });
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    const allCards = document.querySelectorAll('.card');
+    resultsContainer.innerHTML = '';
+    const shownTitles = new Set();
+    let matches = 0;
+    allCards.forEach(card => {
+      const title = card.querySelector('h3')?.innerText.toLowerCase() || '';
+      const genres = card.querySelector('p')?.innerText.toLowerCase() || '';
+      if ((title.includes(query) || genres.includes(query)) && !shownTitles.has(title)) {
+        const clone = card.cloneNode(true);
+        resultsContainer.appendChild(clone);
+        shownTitles.add(title);
+        matches++;
+      }
+    });
+    if (matches > 0) {
+      animeSection.classList.add('hidden');
+      searchResultsSection.classList.remove('hidden');
+    } else {
+      resultsContainer.innerHTML = '<p class="text-gray-400">No results found.</p>';
+      animeSection.classList.add('hidden');
+      searchResultsSection.classList.remove('hidden');
+    }
+    lucide.createIcons(); // for icons inside search results
+  });
+
+  // Theme toggle
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    updateThemeIcon();
+  });
+
+  function updateThemeIcon() {
+    themeIcon.setAttribute('data-lucide', document.body.classList.contains('dark') ? 'sun' : 'moon');
+    lucide.createIcons();
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+    updateThemeIcon();
+    lucide.createIcons();
+  });
+
+  // Sidebar toggle
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  overlay.addEventListener('click', () => {
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+  });
+</script>
+</body>
+</html>
