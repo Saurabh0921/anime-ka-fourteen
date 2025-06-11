@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AKF - Anime Ka Fourteen</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#4fbcff" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+</script>
+  <style>
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .genre-highlight {
+    animation: flash-bg 1s ease-in-out;
+  }
+
+  @keyframes flash-bg {
+    0% { background-color: rgba(255, 255, 0, 0.2); }
+    100% { background-color: transparent; }
+  }
+
+    body.dark {
+      background-color: #111827;
+      color: white;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+      transition: 0.3s ease-in-out;
+    }
+
+    .card-content {
+      display: none;
+    }
+    .card-content {
+  transition: max-height 0.3s ease-in-out;
+}
+
+    .card.expanded .card-content {
+      display: block;
+    }
+
+    #sidebar {
+      transition: transform 0.3s ease-in-out;
+      transform: translateX(-100%);
+    }
+
+    #sidebar.open {
+      transform: translateX(0);
+    }
+
+    #overlay {
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .bg-light {
+      background-color: #f9fafb;
+      color: #1f2937;
+    }
+
+    .dark .bg-light {
+      background-color: #1f2937;
+      color: white;
+    }
+
+    .dark .text-gray-900 {
+      color: white !important;
+    }
+
+    .dark .text-gray-500 {
+      color: #9ca3af !important;
+    }
+searchInput {
+  transition: all 0.3s ease-in-out;
+}
+
+.bg-light {
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
+.dark .bg-light {
+  background-color: #1f2937;
+  color: white;
+}
+
+.dark .text-gray-900 {
+  color: white !important;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+#randomBanner.fade {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#randomBanner.show {
+  opacity: 1;
+}
+
+  #searchInput {
+    transition: all 0.3s ease-in-out;
+  }
+  #searchResultsBox {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 50;
+  }
+  .dark #searchResultsBox {
+    background-color: #1f2937;
+    color: white;
+  }
+  .search-result-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    cursor: pointer;
+  }
+  .dark .search-result-item {
+    border-color: #374151;
+  }
+  .search-result-item:hover {
+    background-color: #f3f4f6;
+  }
+  .dark .search-result-item:hover {
+    background-color: #374151;
+  }
+  #siteTitle.hidden {
+  display: none;
+}
+
+.anime-card {
+  height: 10rem;
+}
+@media (min-width: 768px) {
+  .anime-card {
+    height: 12rem;
+  }
+}
+.bg-cover-center {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.blur-bg {
+  filter: blur(0px);
+  transition: filter 0.3s ease;
+}
+.group:hover .blur-bg {
+  filter: blur(4px);
+}
+</style>
+</head>
+<body class="dark bg-gray-900 text-white">
+
+<!-- Navbar -->
+<nav class="flex justify-between items-center p-4 bg-gray-900 shadow text-white relative">
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" class="p-2 rounded bg-gray-700 text-white z-10">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+<h1 id="siteTitle" class="text-xl  font-bold whitespace-nowrap">AKF - Anime Ka Fourteen</h1>
+  </div>
+<!-- Search Bar (Centered) -->
+<div class="relative w-full flex justify-center">
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="Search anime..."
+    class="w-2/3 md:w-1/3 px-4 py-2 rounded-full border-none outline-none text-black dark:text-white bg-gray-300  opacity-0 scale-95 pointer-events-none transition-all duration-300"
+  />
+  <div id="searchResultsBox" class="hidden mt-2 left-0 right-0"></div>
+</div>
+
+<div class="flex items-center gap-2">
+  <button id="searchToggle" class="p-2 rounded bg-gray-700 text-white">
+    <i data-lucide="search" class="w-5 h-5"></i>
+  </button>
+
+  <button id="themeToggle" class="p-2 rounded bg-gray-700 text-white">
+    <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+  </button>
+</div>
+  
+</nav>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-60 bg-gray-700 bg-opacity-60 border-r border-yellow-400 text-white transform -translate-x-full transition-transform duration-300 z-50 shadow-xl">
+  <div class="flex items-center justify-between p-4 border-b border-yellow-400 ">
+    <h2 class="text-lg font-bold text-yellow-400 tracking-widest">AKF</h2>
+    <button onclick="toggleSidebar()">
+      <i data-lucide="x" class="w-5 h-5 text-white"></i>
+    </button>
+  </div>
+  <nav class="flex-1 px-5 py-4 space-y-4 text-sm font-semibold">
+    <a href="#home" class="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-500 hover:text-black transition">
+      <i data-lucide="home" class="w-5 h-5"></i> Home
+    </a>
+    <a href="#popular" class="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-500 hover:text-black transition">
+      <i data-lucide="flame" class="w-5 h-5"></i> Popular
+    </a>
+    <a href="#genres" class="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-500 hover:text-black transition">
+      <i data-lucide="layers" class="w-5 h-5"></i> Genres
+    </a>
+    <a href="#favorites" class="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-500 hover:text-black transition">
+      <i data-lucide="star" class="w-5 h-5"></i> Favorites
+    </a>
+    <a href="#account" class="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-500 hover:text-black transition">
+      <i data-lucide="user" class="w-5 h-5"></i> Account
+    </a>
+  </nav>
+</aside>
+  <!-- Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+<!-- Search Results Section (hidden by default) -->
+<section id="searchResults" class="p-4 hidden">
+  <h2 class="text-2xl font-semibold mb-4">Search Results</h2>
+  <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</section>
+  <!-- Main Content -->
+  <main id="mainContent" class="p-4 transition-all">
+    <!-- Home Section -->
+    <section id="home" class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Welcome to AKF!</h2>
+<div id="randomBanner" class="relative h-48 rounded-xl shadow-md flex items-center justify-center text-white font-bold text-xl cursor-pointer transition duration-300 bg-cover bg-center overflow-hidden">
+  <div id="bannerText" class="z-10">Loading anime...</div>
+  
+  <!-- Buttons -->
+  <button id="prevBtn" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 px-2 py-1 rounded-full z-10 hover:bg-opacity-70">‹</button>
+  <button id="nextBtn" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 px-2 py-1 rounded-full z-10 hover:bg-opacity-70">›</button>
+  
+  <!-- Optional: dark overlay for text readability -->
+  <div class="absolute inset-0 bg-black bg-opacity-30 z-0 rounded-xl"></div>
+</div>
+    </section>
+    
+  <!-- Trending Anime Section -->
+<section id="trending" class="p-4">
+  <h2 class="text-2xl font-bold mb-4 text-white flex items-center gap-2">
+    <i data-lucide="flame" class="w-6 h-6"></i>
+    Trending Anime
+  </h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    <!-- Jujutsu Kaisen -->
+    <a href="jujutsukaisen.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+      <div class="relative h-32 sm:h-36 lg:h-32 bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn8k9rPpxhD8BJZzqZK46rOeMl2U9C67eSPOhyypks_EGcJKm6aBc-rjU&s=10');">
+        <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn8k9rPpxhD8BJZzqZK46rOeMl2U9C67eSPOhyypks_EGcJKm6aBc-rjU&s=10');"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+        <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+          <h3 class="text-lg font-bold">Jujutsu Kaisen</h3>
+          <p class="text-sm text-gray-200">Action, Supernatural</p>
+          <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">
+            Yuji Itadori joins Jujutsu Tech to exorcise cursed spirits and save his friends.
+          </p>
+        </div>
+      </div>
+    </a>
+
+    <!-- Demon Slayer -->
+    <a href="demonslayer.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+      <div class="relative h-32 sm:h-36 lg:h-32 bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQuM8QxNpqK5D4JmfcAw-ueDclbTQrfn_PP6SfCgtzFyb4OibYV-q1cLsT&s=10');">
+        <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQuM8QxNpqK5D4JmfcAw-ueDclbTQrfn_PP6SfCgtzFyb4OibYV-q1cLsT&s=10');"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+        <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+          <h3 class="text-lg font-bold">Demon Slayer</h3>
+          <p class="text-sm text-gray-200">Action, Historical</p>
+          <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">
+            Tanjiro battles demons and seeks a cure for his sister Nezuko in this beautifully animated epic.
+          </p>
+        </div>
+      </div>
+    </a>
+
+    <!-- Solo Leveling -->
+    <a href="sololeveling.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+      <div class="relative h-32 sm:h-36 lg:h-32 bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp3ySvl1LG3PwnmaorVoaC_CfSAxyy_S4L0M1XPsKIgBd_qpFHvyKa0Vw&s=10');">
+        <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp3ySvl1LG3PwnmaorVoaC_CfSAxyy_S4L0M1XPsKIgBd_qpFHvyKa0Vw&s=10');"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+        <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+          <h3 class="text-lg font-bold">Solo Leveling</h3>
+          <p class="text-sm text-gray-200">Action, Fantasy</p>
+          <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">
+            Sung Jin-Woo, once the weakest hunter, gains a mysterious system that lets him grow infinitely stronger.
+          </p>
+        </div>
+      </div>
+    </a>
+
+    <!-- Frieren: Beyond Journey’s End -->
+    <a href="frieren.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+      <div class="relative h-32 sm:h-36 lg:h-32 bg-cover-center" style="background-image: url('https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=cover,format=auto,quality=85,width=1920/keyart/GG5H5XQX4-backdrop_wide');">
+        <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=cover,format=auto,quality=85,width=1920/keyart/GG5H5XQX4-backdrop_wide');"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+        <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+          <h3 class="text-lg font-bold">Frieren</h3>
+          <p class="text-sm text-gray-200">Drama, Fantasy</p>
+          <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">
+            After defeating the Demon King, an elf mage begins a quiet journey reflecting on life, time, and loss.
+          </p>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+    <!-- Popular Section -->
+    <section id="popular" class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Popular Anime</h2>
+     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+  <!-- Naruto Card -->
+  <a href="naruto.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+    <div class="relative h-32 sm:h-36 lg:h-32 bg-cover-center" style="background-image: url('https://de7i3bh7bgh0d.cloudfront.net/2025/01/07/00/09/26/71ea757d-c3cf-4256-a677-b51e74959837/NAR_The_Complete_Series_LE_Blog_1200x630.jpg');">
+      <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://de7i3bh7bgh0d.cloudfront.net/2025/01/07/00/09/26/71ea757d-c3cf-4256-a677-b51e74959837/NAR_The_Complete_Series_LE_Blog_1200x630.jpg');"></div>
+      <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+      <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+        <h3 class="text-lg font-bold">Naruto</h3>
+        <p class="text-sm text-gray-200">Action, Ninja</p>
+        <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">
+          A young ninja seeks recognition and dreams of becoming the strongest leader of his village.
+        </p>
+      </div>
+    </div>
+  </a>
+
+      <!-- 2nd Anime -->
+    <a href="onepiece.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+  <div class="relative h-32 md:h-36 bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmR0Ro0BsKPI3MWnOteaiz7eCNPejB0Oc14YyKZRJwkJZludRCS8_1REI&s=10');">
+    <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmR0Ro0BsKPI3MWnOteaiz7eCNPejB0Oc14YyKZRJwkJZludRCS8_1REI&s=10');"></div>
+    <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+    <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+      <h3 class="text-lg font-bold">One Piece</h3>
+      <p class="text-sm text-gray-200">Action, Adventure</p>
+      <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">Luffy and his crew sail across the seas in search of the ultimate treasure, the One Piece.</p>
+    </div>
+  </div>
+</a>
+
+<a href="bleach.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+  <div class="relative h-32 md:h-36 bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzVy-_NuSSE7PB3RM49Gkp3CROoLvepBb1CY7c22smqdnIkNahQQ_xOSA&s=10');">
+    <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzVy-_NuSSE7PB3RM49Gkp3CROoLvepBb1CY7c22smqdnIkNahQQ_xOSA&s=10');"></div>
+    <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+    <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+      <h3 class="text-lg font-bold">Bleach</h3>
+      <p class="text-sm text-gray-200">Action, Supernatural</p>
+      <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">Ichigo gains Soul Reaper powers and faces deadly enemies from the spirit world.</p>
+    </div>
+  </div>
+</a>
+
+<a href="aot.html" class="block group relative rounded-xl overflow-hidden shadow-md transform transition-transform hover:scale-105">
+  <div class="relative h-32 md:h-36 bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXQAmTsXYsfF7ApK3DXWHbPefcx_toDNEE_ecuTXSEdx5wgX6z1H7SXUdd&s=10');">
+    <div class="absolute inset-0 blur-bg bg-cover-center" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXQAmTsXYsfF7ApK3DXWHbPefcx_toDNEE_ecuTXSEdx5wgX6z1H7SXUdd&s=10');"></div>
+    <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300 rounded-xl"></div>
+    <div class="absolute inset-0 flex flex-col items-start justify-center text-white z-10 text-left px-4 py-2">
+      <h3 class="text-lg font-bold">Attack on Titan</h3>
+      <p class="text-sm text-gray-200">Shonen, Dark Fantasy</p>
+      <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">Humanity battles monstrous titans to survive in a world where walls are their last hope.</p>
+    </div>
+  </div>
+</a>
+      
+      </div>
+    </section>
+
+<!-- Your existing head and layout remain intact above this line --><!-- Genres Section -->
+<section id="genres" class="mb-10">
+  <h2 class="text-2xl font-semibold mb-4">Anime Genres</h2>
+  <div id="genreCards"  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Example Genre Card -->
+  <script>
+const genres = [
+  {
+    name: "Action",
+    icon: "swords",
+    desc: "High-energy battles, physical confrontations, intense pacing.",
+    href: "genre/action.html"
+  },
+  {
+    name: "Adventure",
+    icon: "mountain",
+    desc: "Exploration, quests, discovering new worlds and challenges.",
+    href: "genre/adventure.html"
+  },
+  {
+    name: "Comedy",
+    icon: "laugh",
+    desc: "Humor-driven stories meant to entertain and lighten moods.",
+    href: "genre/comedy.html"
+  },
+  {
+    name: "Romance",
+    icon: "heart",
+    desc: "Focus on love stories, relationships, and emotional bonds.",
+    href: "genre/romance.html"
+  },
+  {
+    name: "Fantasy",
+    icon: "sparkles",
+    desc: "Magical settings, mythical creatures, and supernatural powers.",
+    href: "genre/fantasy.html"
+  },
+  {
+    name: "Psychological",
+    icon: "brain",
+    desc: "Deep character studies, mental battles, mind games.",
+    href: "genre/psychological.html"
+  },
+  {
+    name: "Horror",
+    icon: "ghost",
+    desc: "Dark themes, suspense, fear-inducing settings, and psychological terror.",
+    href: "genre/horror.html"
+  },
+  {
+    name: "Mystery",
+    icon: "search",
+    desc: "Puzzles, investigations, and uncovering hidden truths.",
+    href: "genre/mystery.html"
+  },
+  {
+    name: "Sci-Fi",
+    icon: "tv",
+    desc: "Futuristic technology, space exploration, and alternate realities.",
+    href: "genre/sci-fi.html"
+  },
+  {
+    name: "Drama",
+    icon: "theater",
+    desc: "Emotionally intense stories often focusing on character growth and conflict.",
+    href: "genre/drama.html"
+  },
+  {
+    name: "Slice of Life",
+    icon: "coffee",
+    desc: "Everyday life, character-driven narratives, and personal growth.",
+    href: "genre/slice-of-life.html"
+  },
+  {
+    name: "Sports",
+    icon: "trophy",
+    desc: "Competition, teamwork, and overcoming challenges in various sports.",
+    href: "genre/sports.html"
+  },
+  {
+    name: "Supernatural",
+    icon: "moon",
+    desc: "Incorporation of supernatural elements like ghosts, demons, and magic.",
+    href: "genre/supernatural.html"
+  },
+  {
+    name: "Seinen",
+    icon: "user",
+    desc: "Mature content aimed at adult men, with complex themes and deeper storylines.",
+    href: "genre/seinen.html"
+  },
+  {
+    name: "Shonen",
+    icon: "zap",
+    desc: "Action-packed stories aimed at young boys, featuring strong heroes and adventure.",
+    href: "genre/shonen.html"
+  },
+  {
+    name: "Josei",
+    icon: "flower",
+    desc: "Mature content aimed at adult women, often focused on romance and relationships.",
+    href: "genre/josei.html"
+  },
+  {
+    name: "Isekai",
+    icon: "rotate-3d",
+    desc: "Stories involving characters transported to parallel worlds or alternate realities.",
+    href: "genre/isekai.html"
+  },
+  {
+    name: "Historical",
+    icon: "scroll",
+    desc: "Takes place in historical periods, often blending real-world events with fiction.",
+    href: "genre/historical.html"
+  },
+  {
+    name: "Military",
+    icon: "shield",
+    desc: "Focuses on warfare, soldiers, and military conflicts.",
+    href: "genre/military.html"
+  },
+  {
+    name: "Magical Girl",
+    icon: "wand",
+    desc: "Typically young girls who gain magical powers to protect the world.",
+    href: "genre/magical-girl.html"
+  },
+  {
+    name: "Mecha",
+    icon: "bot",
+    desc: "Robots and giant machines, often with futuristic or dystopian themes.",
+    href: "genre/mecha.html"
+  },
+  {
+    name: "Music",
+    icon: "music",
+    desc: "Music-based stories, often featuring performances or musical competitions.",
+    href: "genre/music.html"
+  },
+  {
+    name: "Yaoi",
+    icon: "hand",
+    desc: "Stories centered on male/male romantic or sexual relationships.",
+    href: "genre/yaoi.html"
+  },
+  {
+    name: "Yuri",
+    icon: "hand-heart",
+    desc: "Stories centered on female/female romantic or sexual relationships.",
+    href: "genre/yuri.html"
+  }
+];
+
+const container = document.getElementById("genreCards");
+
+genres.forEach(({ name, icon, desc, href }) => {
+  const card = document.createElement("a");
+  card.href = href;
+  card.className = "group block relative overflow-hidden opacity-0 translate-y-8 transition-all duration-700 ease-out will-change-transform";
+  card.innerHTML = `
+    <div class="backdrop-blur-md bg-white/60 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl p-6 shadow-lg hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 transform">
+      <div class="flex items-start gap-4">
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-500 to-purple-500 text-white dark:from-blue-700 dark:to-purple-700 shadow-md group-hover:rotate-[8deg] group-hover:scale-110 transition-all duration-300">
+          <i data-lucide="${icon}" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">${name}</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">${desc}</p>
+        </div>
+      </div>
+      <div class="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-br from-blue-300 to-purple-300 dark:from-blue-600 dark:to-purple-600 opacity-10 rounded-full blur-xl pointer-events-none"></div>
+    </div>
+  `;
+  container.appendChild(card);
+});
+
+lucide.createIcons();
+
+// Intersection Observer for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.remove("opacity-0", "translate-y-8");
+      entry.target.classList.add("opacity-100", "translate-y-0");
+      observer.unobserve(entry.target); // animate once
+    }
+  });
+}, {
+  threshold: 0.1
+});
+
+document.querySelectorAll("#genreCards > a").forEach(card => {
+  observer.observe(card);
+});
+
+</script>
+
+  </div>
+</section>
+<!-- Genre Section Template -->
+<section id="genre-action" class="mb-16">
+  <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Action Anime</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <a href="anime/naruto.html" class="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl backdrop-blur-md bg-white/60 dark:bg-white/5 transition-transform hover:scale-[1.02] duration-300">
+      <div class="p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Naruto</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Action, Ninja</p>
+          </div>
+          <img src="https://via.placeholder.com/100" class="rounded-lg w-20 h-20 object-cover" alt="Naruto" />
+        </div>
+        <div class="overflow-hidden max-h-0 group-hover:max-h-40 transition-all duration-500 mt-3 text-sm text-gray-700 dark:text-gray-300">
+          <p>A young ninja seeks recognition and dreams of becoming the strongest leader of his village.</p>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section id="genre-romance" class="mb-16">
+  <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Romance Anime</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl backdrop-blur-md bg-white/60 dark:bg-white/5 transition-transform hover:scale-[1.02] duration-300 cursor-pointer">
+      <div class="p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Your Lie in April</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Romance, Music</p>
+          </div>
+          <img src="https://via.placeholder.com/100" class="rounded-lg w-20 h-20 object-cover" alt="Your Lie in April" />
+        </div>
+        <div class="overflow-hidden max-h-0 group-hover:max-h-40 transition-all duration-500 mt-3 text-sm text-gray-700 dark:text-gray-300">
+          <p>A piano prodigy rediscovers his love for music through an inspiring violinist.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="genre-comedy" class="mb-16">
+  <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Comedy Anime</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl backdrop-blur-md bg-white/60 dark:bg-white/5 transition-transform hover:scale-[1.02] duration-300 cursor-pointer">
+      <div class="p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Gintama</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Comedy, Parody</p>
+          </div>
+          <img src="https://via.placeholder.com/100" class="rounded-lg w-20 h-20 object-cover" alt="Gintama" />
+        </div>
+        <div class="overflow-hidden max-h-0 group-hover:max-h-40 transition-all duration-500 mt-3 text-sm text-gray-700 dark:text-gray-300">
+          <p>Samurai in a sci-fi era doing odd jobs while parodying everything under the sun.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+  
+
+  <!-- Scripts -->
+  <script>
+    
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    
+
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('hidden');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.add('hidden');
+    });
+
+    // Swipe for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      const swipeDistance = touchEndX - touchStartX;
+      const isMobile = window.innerWidth < 768;
+
+      if (!isMobile) return;
+
+      if (swipeDistance > 80 && touchStartX < 40) {
+        sidebar.classList.add('open');
+        overlay.classList.remove('hidden');
+      } else if (swipeDistance < -80) {
+        sidebar.classList.remove('open');
+        overlay.classList.add('hidden');
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.add('hidden');
+      updateThemeIcon();
+    });
+
+
+
+    // Collapse any expanded cards
+    document.querySelectorAll('.card.expanded').forEach(card => {
+      card.classList.remove('expanded');
+    });
+// Sidebar links: scroll & close sidebar
+document.querySelectorAll('#sidebar a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const targetId = link.getAttribute('href');
+    const section = document.querySelector(targetId);
+
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+      section.classList.add('genre-highlight');
+      setTimeout(() => section.classList.remove('genre-highlight'), 1000);
+    }
+
+    // Close sidebar after click
+    sidebar.classList.remove('open');
+    overlay.classList.add('hidden');
+  });
+});
+
+  function normalize(str) {
+    return str.toLowerCase().replace(/\s+/g, '');
+  }
+
+  
+
+    lucide.createIcons();
+  </script>
+<script>
+  const randomBanner = document.getElementById("randomBanner");
+  const bannerText = document.getElementById("bannerText");
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
+
+  const animeList = [
+    { title: "Naruto", url: "naruto.html", image: "https://de7i3bh7bgh0d.cloudfront.net/2025/01/07/00/09/26/71ea757d-c3cf-4256-a677-b51e74959837/NAR_The_Complete_Series_LE_Blog_1200x630.jpg" },
+    { title: "Attack on Titan", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXQAmTsXYsfF7ApK3DXWHbPefcx_toDNEE_ecuTXSEdx5wgX6z1H7SXUdd&s=10" },
+    { title: "Your Lie in April", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbvci0FEcjniWSfdxEMdsdg3Ba8q53GoypnZU0uHAMlNzMp0rACYJuDTc&s=10" },
+    { title: "Gintama", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsnafZZrFlusrH8oGN2OkoONLiG1Q99yo1YVKSL0XioRgNz1C1LulOv1ut&s=10" },
+    { title: "Death Note", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0P1l1UoMXsu1LTThqU4UqI-_N_n9eTE3MxtsRMOE8PoBIOnOVMGujmnnZ&s=10" },
+    { title: "One Piece", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmR0Ro0BsKPI3MWnOteaiz7eCNPejB0Oc14YyKZRJwkJZludRCS8_1REI&s=10" },
+    { title: "Demon Slayer", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEh_i4W2Ra0-Na9fG_azb1WIOTA1cVX3LMIDdead6IkdV02pNOzG6ffVfS&s=10" },
+    { title: "Fullmetal Alchemist", url: "#", image: "https://sm.ign.com/t/ign_ap/screenshot/default/fullmetal-f_9aj1.3840.jpg" },
+    { title: "Jujutsu Kaisen", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXPEr5b2liNuUwAky3oGYCch9HdzGcIUkrNh-bZMUZkIf8L1_vRi1OLKA&s=10" },
+    { title: "Spy x Family", url: "#", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6du7UpU2Gw25_e5E6CL4zzPXM97USE9OrbvntyF2aUms3_Pz258RTtCq&s=10" }
+  ];
+
+  let currentIndex = Math.floor(Math.random() * animeList.length);
+  let bannerInterval;
+
+  function showAnime(index) {
+  const anime = animeList[index];
+
+  // Start fade-out
+  randomBanner.classList.remove("show");
+  randomBanner.classList.add("fade");
+
+  // Wait for fade-out, then update content and fade in
+  setTimeout(() => {
+    bannerText.textContent = anime.title;
+    randomBanner.style.backgroundImage = `url('${anime.image}')`;
+    randomBanner.onclick = () => window.location.href = anime.url;
+
+    // Trigger fade-in
+    randomBanner.classList.add("show");
+  }, 300);
+
+  createDots();
+}
+
+  function nextAnime() {
+    currentIndex = (currentIndex + 1) % animeList.length;
+    showAnime(currentIndex);
+    resetInterval();
+  }
+
+  function prevAnime() {
+    currentIndex = (currentIndex - 1 + animeList.length) % animeList.length;
+    showAnime(currentIndex);
+    resetInterval();
+  }
+
+  function resetInterval() {
+    clearInterval(bannerInterval);
+    bannerInterval = setInterval(nextAnime, 3000); // Change every 10 seconds
+  }
+
+  nextBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // Prevent banner click
+  nextAnime();
+});
+
+prevBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // Prevent banner click
+  prevAnime();
+});
+
+  showAnime(currentIndex);
+  bannerInterval = setInterval(nextAnime, 3000);
+</script>
+<script>
+  const allAnime = [
+    { title: "Berserk", genre: "Seinen", link: "berserk.html" },
+    { title: "Monster", genre: "Seinen", link: "monster.html" },
+    { title: "Naruto", genre: "Shonen", link: "naruto.html" },
+    { title: "Attack on Titan", genre: "Shonen", link: "aot.html" },
+    { title: "Kaguya-sama", genre: "Romance", link: "kaguya.html" },
+    { title: "Ergo Proxy", genre: "Seinen", link: "ergoproxy.html" },
+    { title: "Death Note", genre: "Psychological", link: "deathnote.html" },
+    // Add more as your site grows
+  ];
+
+  const searchToggle = document.getElementById('searchToggle');
+  const searchInput = document.getElementById('searchInput');
+  const resultsBox = document.getElementById('searchResultsBox');
+
+  let searchOpen = false;
+
+  searchToggle.addEventListener('click', () => {
+  searchOpen = !searchOpen;
+  document.getElementById('siteTitle').classList.toggle('hidden', searchOpen); // Hide logo
+  if (searchOpen) {
+    searchInput.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+    searchInput.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+    searchInput.focus();
+  } else {
+    searchInput.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+    searchInput.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+    resultsBox.classList.add('hidden');
+    searchInput.value = '';
+  }
+});
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    resultsBox.innerHTML = '';
+    if (query.trim() === '') {
+      resultsBox.classList.add('hidden');
+      return;
+    }
+
+    const matches = allAnime.filter(a =>
+      a.title.toLowerCase().includes(query) ||
+      a.genre.toLowerCase().includes(query)
+    );
+
+    if (matches.length === 0) {
+      resultsBox.innerHTML = `<div class="search-result-item">No results found.</div>`;
+    } else {
+      matches.forEach(anime => {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.innerHTML = `<strong>${anime.title}</strong> <span class="text-sm text-gray-500">(${anime.genre})</span>`;
+        item.onclick = () => window.location.href = anime.link;
+        resultsBox.appendChild(item);
+      });
+    }
+
+    resultsBox.classList.remove('hidden');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !resultsBox.contains(e.target) && !searchToggle.contains(e.target)) {
+      searchInput.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+      searchInput.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+      resultsBox.classList.add('hidden');
+      searchInput.value = '';
+      searchOpen = false;
+    }
+  });
+</script>
+</body>
+</html>

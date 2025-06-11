@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>One Piece - AKF Anime</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="globalsearch.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .episode-card { transition: transform 0.3s ease-in-out; }
+    .episode-modal { animation: fadeIn 0.3s ease-in-out forwards; }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    .bg-light { background-color: #1e293b; }
+    .text-light { color: white; }
+    .group:hover .episode-card { transform: scale(1.02); z-index: 10; filter: brightness(80%) blur(1px); }
+    
+    .fade-slide {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .fade-slide.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white">
+  
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center p-4 bg-gray-900 shadow text-white relative">
+    <div class="flex items-center gap-4">
+      <button id="menuToggle" class="p-2 rounded bg-gray-700 text-white z-10">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+      <a href="akf.html" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+    </div>
+    
+    <!-- Centered Search Bar in Navbar -->
+    <div class="flex-1 mx-4 hidden md:flex justify-center relative">
+      <input id="globalSearchBar" type="text" placeholder="Search anime..."
+        class="w-full max-w-md px-4 py-2 rounded-full bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-red-500 outline-none transition placeholder-gray-400" />
+      <div id="globalSearchResults" class="absolute top-full left-0 w-full bg-gray-900 border border-red-400 mt-2 rounded-xl shadow-lg z-50 hidden max-h-60 overflow-y-auto"></div>
+    </div>
+    
+    <div class="flex items-center gap-4 z-10">
+      <button id="searchToggle" class="p-2 rounded bg-gray-700 text-white">
+        <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-60 bg-gray-700 bg-opacity-60 border-r border-red-400 text-white transform -translate-x-full transition-transform duration-300 z-50 shadow-xl">
+    <div class="flex items-center justify-between p-4 border-b border-red-400">
+      <h2 class="text-lg font-bold text-red-400 tracking-widest">AKF</h2>
+      <button onclick="toggleSidebar()">
+        <i data-lucide="x" class="w-5 h-5 text-white"></i>
+      </button>
+    </div>
+    <nav class="flex-1 px-5 py-4 space-y-4 text-sm font-semibold">
+      <a href="akf.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+        <i data-lucide="home" class="w-5 h-5"></i> Home
+      </a>
+      <a href="popular.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+        <i data-lucide="flame" class="w-5 h-5"></i> Popular
+      </a>
+      <a href="genre.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+        <i data-lucide="layers" class="w-5 h-5"></i> Genres
+      </a>
+      <a href="favorites.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+        <i data-lucide="star" class="w-5 h-5"></i> Favorites
+      </a>
+      <a href="account.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+        <i data-lucide="user" class="w-5 h-5"></i> Account
+      </a>
+    </nav>
+  </aside>
+  
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40" onclick="toggleSidebar()"></div>
+
+  <!-- Main Content -->
+  <main id="mainContent" class="p-4 max-w-3xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmR0Ro0BsKPI3MWnOteaiz7eCNPejB0Oc14YyKZRJwkJZludRCS8_1REI&s=10" alt="One Piece" class="rounded-xl shadow w-full md:w-1/3" />
+      <div>
+        <h2 class="text-2xl font-bold mb-2">One Piece</h2>
+        <p class="text-sm text-gray-400 mb-2">Genres: Action, Adventure, Fantasy</p>
+        <p class="text-base leading-relaxed">
+          Monkey D. Luffy sets off on an adventure to become the King of Pirates by finding the legendary treasure One Piece. 
+          Along the way, he gathers a diverse crew of pirates and faces powerful enemies in the vast world of the Grand Line.
+        </p>
+      </div>
+    </div>
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold mb-2">More Info</h3>
+      <ul class="list-disc list-inside space-y-1 text-sm">
+        <li>Episodes: 1100+ (Ongoing)</li>
+        <li>Status: Currently Airing</li>
+        <li>Studio: Toei Animation</li>
+        <li>Original Run: 1999 - Present</li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- Character Cards -->
+  <section id="characters" class="p-4 max-w-4xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-red-400 mb-6 border-b border-red-400 inline-block">Main Characters</h2>
+    <div id="charactersContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+  </section>
+
+  <!-- Devil Fruits Section -->
+  <section id="fruits" class="px-4 py-8 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-red-400 mb-6 border-b border-red-400 inline-block">Devil Fruits</h2>
+    <div id="fruitContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- Epic Battles Section -->
+  <section id="fights" class="px-4 py-8 text-white max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-red-400 mb-6 border-b border-red-400 inline-block">Epic Battles</h2>
+    <div id="fightContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- Episodes Section -->
+  <section class="p-4 max-w-5xl mx-auto mt-10">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-2xl font-bold text-red-400">Episodes</h3>
+      <button id="viewMoreBtn"
+        class="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 shadow hover:shadow-[0_0_10px_#f87171] transition-all duration-300">
+        <span class="icon-container">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-white transition-transform duration-300"></i>
+        </span>
+      </button>
+    </div>
+    <div id="episodeContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+  </section>
+
+  <!-- Download Modal -->
+  <div id="downloadModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+    <div class="bg-gray-900 p-6 rounded-xl max-w-sm w-full text-white relative">
+      <button id="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-400">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h4 class="text-lg font-bold mb-4">Download From:</h4>
+      <div class="flex flex-wrap gap-4">
+        <a id="linkA" href="#" target="_blank" class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded shadow">A</a>
+        <a id="linkB" href="#" target="_blank" class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded shadow">B</a>
+        <a id="linkC" href="#" target="_blank" class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded shadow">C</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Data for One Piece
+  const episodes = [
+    {
+      num: 1,
+      title: "I'm Luffy! The Man Who Will Become the Pirate King!",
+      desc: "Luffy begins his journey to become King of the Pirates.",
+      arc: "East Blue Saga",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 2,
+      title: "Enter the Great Swordsman! Pirate Hunter Roronoa Zoro",
+      desc: "Luffy recruits Zoro, the pirate hunter, as his first crew member.",
+      arc: "East Blue Saga",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 3,
+      title: "Morgan vs. Luffy! Who's the Mysterious Pretty Girl?",
+      desc: "Luffy and Zoro take on Captain Morgan to free Koby.",
+      arc: "East Blue Saga",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    }
+  ];
+
+  const characters = [
+    {
+      name: "Monkey D. Luffy",
+      img: "https://wallpapercave.com/wp/wp9414530.jpg",
+      role: "Captain",
+      desc: "Rubber-powered pirate who aims to become the Pirate King after eating the Gomu Gomu no Mi."
+    },
+    {
+      name: "Roronoa Zoro",
+      img: "https://wallpapercave.com/wp/wp9414700.jpg",
+      role: "Swordsman",
+      desc: "Three-sword style master who aims to be the world's greatest swordsman."
+    },
+    {
+      name: "Nami",
+      img: "https://wallpapercave.com/wp/wp9414731.jpg",
+      role: "Navigator",
+      desc: "Skilled navigator and thief who dreams of drawing a complete world map."
+    },
+    {
+      name: "Sanji",
+      img: "https://wallpapercave.com/wp/wp9414761.jpg",
+      role: "Cook",
+      desc: "Black-leg fighter and master chef who searches for the All Blue."
+    },
+    {
+      name: "Tony Tony Chopper",
+      img: "https://wallpapercave.com/wp/wp9414792.jpg",
+      role: "Doctor",
+      desc: "Reindeer who ate the Human-Human Fruit and became the crew's doctor."
+    },
+    {
+      name: "Nico Robin",
+      img: "https://wallpapercave.com/wp/wp9414828.jpg",
+      role: "Archaeologist",
+      desc: "Only person who can read Poneglyphs and uncover the True History."
+    }
+  ];
+
+  const devilFruits = [
+    {
+      name: "Gomu Gomu no Mi",
+      type: "Paramecia",
+      users: "Monkey D. Luffy",
+      img: "https://wallpapercave.com/wp/wp9414530.jpg",
+      desc: "Turns the user's body into rubber, granting immense stretching abilities and resistance to blunt attacks."
+    },
+    {
+      name: "Hito Hito no Mi",
+      type: "Zoan",
+      users: "Tony Tony Chopper",
+      img: "https://wallpapercave.com/wp/wp9414792.jpg",
+      desc: "Allows the user to transform between reindeer, human, and hybrid forms with enhanced intelligence."
+    },
+    {
+      name: "Mera Mera no Mi",
+      type: "Logia",
+      users: "Portgas D. Ace, Sabo",
+      img: "https://wallpapercave.com/wp/wp6781427.jpg",
+      desc: "Grants the user the ability to create, control, and transform into fire at will."
+    },
+    {
+      name: "Ope Ope no Mi",
+      type: "Paramecia",
+      users: "Trafalgar Law",
+      img: "https://wallpapercave.com/wp/wp6781435.jpg",
+      desc: "Allows the user to create a spherical territory where they can manipulate objects and perform surgeries."
+    },
+    {
+      name: "Yami Yami no Mi",
+      type: "Logia",
+      users: "Marshall D. Teach",
+      img: "https://wallpapercave.com/wp/wp6781413.jpg",
+      desc: "Grants control over darkness and the ability to nullify other Devil Fruit powers."
+    },
+    {
+      name: "Gura Gura no Mi",
+      type: "Paramecia",
+      users: "Edward Newgate, Marshall D. Teach",
+      img: "https://wallpapercave.com/wp/wp6781445.jpg",
+      desc: "Allows the user to create vibrations and shockwaves, capable of causing massive destruction."
+    }
+  ];
+
+  const epicBattles = [
+    {
+      title: "Luffy vs. Katakuri",
+      fighters: "Luffy vs. Charlotte Katakuri",
+      episode: "Whole Cake Island Arc",
+      img: "https://wallpapercave.com/wp/wp6781455.jpg",
+      desc: "An intense 12-hour battle where Luffy develops his advanced Observation Haki."
+    },
+    {
+      title: "Marineford War",
+      fighters: "Whitebeard Pirates vs. Marines",
+      episode: "Marineford Arc",
+      img: "https://wallpapercave.com/wp/wp6781465.jpg",
+      desc: "The massive war to rescue Ace, involving all major powers of the One Piece world."
+    },
+    {
+      title: "Straw Hats vs. CP9",
+      fighters: "Straw Hat Crew vs. CP9 Agents",
+      episode: "Enies Lobby Arc",
+      img: "https://wallpapercave.com/wp/wp6781475.jpg",
+      desc: "The emotional battle to rescue Nico Robin from the World Government."
+    },
+    {
+      title: "Zoro vs. King",
+      fighters: "Roronoa Zoro vs. King the Wildfire",
+      episode: "Wano Country Arc",
+      img: "https://wallpapercave.com/wp/wp6781485.jpg",
+      desc: "Zoro's ultimate test as a swordsman against one of Kaido's strongest commanders."
+    },
+    {
+      title: "Luffy vs. Doflamingo",
+      fighters: "Luffy vs. Donquixote Doflamingo",
+      episode: "Dressrosa Arc",
+      img: "https://wallpapercave.com/wp/wp6781535.jpg",
+      desc: "Luffy's battle to liberate Dressrosa from the tyrannical Warlord."
+    },
+    {
+      title: "Luffy vs. Kaido",
+      fighters: "Luffy vs. Kaido",
+      episode: "Wano Country Arc",
+      img: "https://wallpapercave.com/wp/wp6781545.jpg",
+      desc: "The climactic battle to liberate Wano from the Beast Pirates."
+    }
+  ];
+
+  // Render Functions (identical structure to reference)
+  const episodeContainer = document.getElementById("episodeContainer");
+  const modal = document.getElementById("downloadModal");
+  const closeModal = document.getElementById("closeModal");
+  const linkA = document.getElementById("linkA");
+  const linkB = document.getElementById("linkB");
+  const linkC = document.getElementById("linkC");
+  const viewMoreBtn = document.getElementById("viewMoreBtn");
+  const viewIcon = document.getElementById("viewIcon");
+
+  let expanded = false;
+
+  function renderEpisodes() {
+    episodeContainer.innerHTML = "";
+    const visibleEpisodes = expanded ? episodes : episodes.slice(0, 2);
+
+    visibleEpisodes.forEach((ep, index) => {
+      const card = document.createElement("div");
+      card.className = "fade-slide cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-gray-700 hover:scale-[1.02] transition-transform duration-300";
+
+      card.onclick = () => {
+        linkA.href = ep.linkA;
+        linkB.href = ep.linkB;
+        linkC.href = ep.linkC;
+        modal.classList.remove("hidden");
+      };
+
+      card.innerHTML = `
+        <div class="relative z-10 space-y-2">
+          <div class="text-sm font-semibold text-red-400">Episode ${ep.num}</div>
+          <h4 class="text-md font-bold text-white leading-tight">${ep.title}</h4>
+          <p class="text-xs text-gray-300">${ep.desc}</p>
+          <span class="inline-block text-[10px] text-gray-400 mt-2">Arc: ${ep.arc}</span>
+        </div>
+        <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+      `;
+
+      episodeContainer.appendChild(card);
+      setTimeout(() => card.classList.add("show"), 100 * index);
+    });
+
+    const iconContainer = document.querySelector(".icon-container");
+    iconContainer.innerHTML = `
+      <i data-lucide="${expanded ? "chevron-up" : "chevron-down"}" 
+         class="w-5 h-5 text-white transition-transform duration-300">
+      </i>
+    `;
+    lucide.createIcons();
+  }
+
+  viewMoreBtn.addEventListener("click", () => {
+    expanded = !expanded;
+    renderEpisodes();
+  });
+
+  closeModal.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // Character rendering
+  const charactersContainer = document.getElementById("charactersContainer");
+  characters.forEach(char => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#ff4d4d] hover:border-red-400";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${char.img}" alt="${char.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <h3 class="text-xl font-bold text-red-400">${char.name}</h3>
+        <p class="text-sm text-orange-200"><strong>Role:</strong> ${char.role}</p>
+        <p class="text-sm text-gray-300 line-clamp-3">${char.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    charactersContainer.appendChild(card);
+  });
+
+  // Devil Fruits rendering
+  const fruitContainer = document.getElementById("fruitContainer");
+  devilFruits.forEach(fruit => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#f43f5e] hover:border-red-400";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${fruit.img}" alt="${fruit.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-red-300">${fruit.type}</div>
+        <h3 class="text-xl font-bold text-red-400">${fruit.name}</h3>
+        <p class="text-sm text-orange-200"><strong>Users:</strong> ${fruit.users}</p>
+        <p class="text-sm text-gray-300 line-clamp-3">${fruit.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    fruitContainer.appendChild(card);
+  });
+
+  // Battles rendering
+  const fightContainer = document.getElementById("fightContainer");
+  epicBattles.forEach(fight => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#ff4d4d] hover:border-red-400";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${fight.img}" alt="${fight.title}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-red-300">${fight.fighters}</div>
+        <h3 class="text-xl font-bold text-orange-300">${fight.title}</h3>
+        <p class="text-sm italic text-gray-400">${fight.episode}</p>
+        <p class="text-sm text-gray-300 line-clamp-3">${fight.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    fightContainer.appendChild(card);
+  });
+
+  // INITIAL RENDER
+  renderEpisodes();
+
+  // Sidebar toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+
+  // Search toggle
+  const searchToggle = document.getElementById("searchToggle");
+  const searchInput = document.getElementById("globalSearchBar");
+
+  searchToggle.addEventListener("click", () => {
+    if (searchInput) {
+      searchInput.focus();
+    }
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

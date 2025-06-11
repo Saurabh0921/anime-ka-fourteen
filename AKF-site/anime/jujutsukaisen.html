@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jujutsu Kaisen - AKF Anime</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    .episode-card { transition: transform 0.3s ease-in-out; }
+    .group:hover .episode-card {
+      transform: scale(1.02);
+      z-index: 10;
+      filter: brightness(80%) blur(1px);
+    }
+    .bg-light { background-color: #1e293b; }
+    .text-light { color: white; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white">
+<!-- Navbar -->
+<nav class="flex justify-between items-center p-4 bg-gray-900 shadow text-white relative">
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white z-10">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+    <a href="akf.html" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+  </div>
+  <div id="searchBarWrapper" class="absolute inset-0 flex justify-center items-center pointer-events-none">
+    <input id="searchInput" type="text" placeholder="Search..."
+      class="w-2/3 md:w-1/3 px-4 py-2 rounded-full border-none outline-none text-white bg-gray-700 opacity-0 scale-95 transition-all duration-300 pointer-events-auto" />
+  </div>
+  <div class="flex items-center gap-4 z-10">
+    <button id="searchToggle" class="p-2 rounded bg-gray-700 text-white">
+      <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+    </button>
+    <button id="user" class="p-2 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+      <i data-lucide="user" class="w-5 h-5"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed top-17 left-0 h-full w-48 bg-gray-800 p-4 space-y-4 z-50 transform -translate-x-full transition-transform duration-300">
+  <a href="akf.html#home" class="block font-semibold hover:underline">Home</a>
+  <a href="akf.html#popular" class="block font-semibold hover:underline">Popular</a>
+  <a href="akf.html#genres" class="block font-semibold hover:underline">Genres</a>
+  <a href="akf.html#settings" class="block font-semibold hover:underline">Settings</a>
+</aside>
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div>
+
+<!-- Main Content -->
+<main id="mainContent" class="p-4 max-w-3xl mx-auto">
+  <div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHsL0pWuceQRBiDE53oV2zTrUbQJiknv3VIwU-ALOHDv4TVPbm3ihRYek&s=10" alt="Jujutsu Kaisen" class="rounded-xl shadow w-full md:w-1/3" />
+    <div>
+      <h2 class="text-2xl font-bold mb-2">Jujutsu Kaisen</h2>
+      <p class="text-sm text-gray-400 mb-2">Genres: Action, Supernatural, Dark Fantasy</p>
+      <p class="text-base leading-relaxed">
+        Yuji Itadori becomes a Jujutsu sorcerer after swallowing a powerful cursed object and getting caught in the battle between curses and sorcerers. With allies like Gojo and Megumi, he fights to protect humanity.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <h3 class="text-lg font-semibold mb-2">More Info</h3>
+    <ul class="list-disc list-inside space-y-1 text-sm">
+      <li>Episodes: 47+ (Ongoing)</li>
+      <li>Status: Airing</li>
+      <li>Studio: MAPPA</li>
+      <li>Original Run: 2020 – Present</li>
+    </ul>
+  </div>
+</main>
+
+<!-- Episodes -->
+<section class="p-4 max-w-4xl mx-auto mt-10">
+  <h3 class="text-2xl font-bold mb-4">Episodes</h3>
+
+  <!-- Filter -->
+  <div class="sticky top-4 bg-gray-900 z-30 p-2 rounded shadow mb-4">
+    <label for="episodeFilter" class="block font-semibold mb-1">Filter by Arc:</label>
+    <select id="episodeFilter" class="w-full md:w-1/3 p-2 rounded bg-gray-700 text-white">
+      <option value="all">All</option>
+      <option value="intro">Introduction</option>
+      <option value="kyoto">Kyoto Goodwill Event</option>
+      <option value="shibuya">Shibuya Incident</option>
+    </select>
+  </div>
+
+  <!-- Episode Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+</section>
+
+<!-- Scroll to top -->
+<button id="scrollTopBtn" class="hidden fixed bottom-6 right-6 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition duration-300 z-50">
+  <i data-lucide="arrow-up" class="w-5 h-5"></i>
+</button>
+
+<!-- Video Modal -->
+<div id="videoPlayer" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
+  <div class="relative w-full max-w-5xl aspect-video">
+    <button id="closeVideo" class="absolute top-2 right-2 bg-white text-black px-3 py-1 rounded z-10">Close</button>
+    <iframe id="videoIframe" class="w-full h-full rounded-xl" src="" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
+
+<script>
+const episodes = [
+  { num: 1, title: "Ryomen Sukuna", desc: "Yuji eats a cursed finger and becomes host to a legendary curse.", arc: "intro", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJU-GPVCyZBWpVL3ttFceDp0jqzdLabfXpvC7-ebexD95-Ozqi_YJUqk1o&s=10" },
+  { num: 2, title: "For Myself", desc: "Yuji starts training at Tokyo Jujutsu High with Gojo.", arc: "intro", image: "" },
+  { num: 13, title: "Tomorrow", desc: "The battle in the cursed womb reaches its climax.", arc: "intro", image: "https://cdn.myanimelist.net/images/episode/1704/427106.jpg" },
+  { num: 17, title: "Kyoto Sister School Exchange Event", desc: "Students from Tokyo and Kyoto Jujutsu schools face off.", arc: "kyoto", image: "https://cdn.myanimelist.net/images/episode/1704/429335.jpg" },
+  { num: 24, title: "Accomplices", desc: "Yuji and Nobara confront the brothers in a cursed domain.", arc: "kyoto", image: "https://cdn.myanimelist.net/images/episode/1704/432498.jpg" },
+  { num: 36, title: "Shibuya Incident", desc: "The Shibuya Incident begins as Gojo enters the battlefield.", arc: "shibuya", image: "https://cdn.myanimelist.net/images/episode/1704/434215.jpg" }
+];
+
+const container = document.querySelector(".grid.grid-cols-1");
+container.innerHTML = "";
+
+episodes.forEach(ep => {
+  container.innerHTML += `
+    <div onclick="playEpisode(${ep.num})" 
+         class="cursor-pointer group relative overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-gray-700 hover:scale-[1.02] transition-transform duration-300"
+         data-arc="${ep.arc}">
+         
+      <!-- Abstract Background Overlay -->
+      <div class="absolute inset-0 z-0">
+        <img src="${ep.image || 'https://shorturl.at/37LaA'}"
+             alt="Episode ${ep.num}" 
+             class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+
+      <!-- Card Content -->
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-yellow-400">Episode ${ep.num}</div>
+        <h4 class="text-md font-bold text-white leading-tight">${ep.title}</h4>
+        <p class="text-xs text-gray-300 line-clamp-3">${ep.desc}</p>
+        <span class="inline-block text-[10px] text-gray-400 mt-2">Arc: ${ep.arc}</span>
+      </div>
+
+      <!-- Hover Glow -->
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-yellow-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    </div>`;
+});
+
+document.getElementById("episodeFilter").addEventListener("change", e => {
+  const selected = e.target.value;
+  document.querySelectorAll("[data-arc]").forEach(card => {
+    card.style.display = (selected === "all" || card.dataset.arc === selected) ? "block" : "none";
+  });
+});
+
+const scrollBtn = document.getElementById("scrollTopBtn");
+window.addEventListener("scroll", () => {
+  scrollBtn.classList.toggle("hidden", window.scrollY < 300);
+});
+scrollBtn.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+function playEpisode(epNum) {
+  const videoPlayer = document.getElementById('videoPlayer');
+  const videoIframe = document.getElementById('videoIframe');
+  const links = {
+    1: "https://www.youtube.com/embed/RS1tiZ5tH7E",
+    2: "https://www.youtube.com/embed/Xn8yUgqZu1w",
+    13: "https://www.youtube.com/embed/EXAMPLE_ID3",
+    17: "https://www.youtube.com/embed/EXAMPLE_ID4",
+    24: "https://www.youtube.com/embed/EXAMPLE_ID5",
+    36: "https://www.youtube.com/embed/EXAMPLE_ID6"
+  };
+  videoIframe.src = links[epNum] || "";
+  videoPlayer.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+document.getElementById("closeVideo").addEventListener("click", () => {
+  document.getElementById("videoPlayer").classList.add("hidden");
+  document.getElementById("videoIframe").src = "";
+  document.body.style.overflow = "auto";
+});
+
+document.getElementById("menuToggle").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("-translate-x-full");
+  document.getElementById("overlay").classList.toggle("hidden");
+});
+document.getElementById("overlay").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.add("-translate-x-full");
+  document.getElementById("overlay").classList.add("hidden");
+});
+document.getElementById("searchToggle").addEventListener("click", () => {
+  const input = document.getElementById("searchInput");
+  const title = document.querySelector("nav a");
+  const isHidden = input.classList.contains("opacity-0");
+  if (isHidden) {
+    title.classList.add("opacity-0", "pointer-events-none");
+    input.classList.remove("opacity-0", "scale-95");
+    input.classList.add("opacity-100", "scale-100");
+    input.focus();
+  } else {
+    title.classList.remove("opacity-0", "pointer-events-none");
+    input.classList.remove("opacity-100", "scale-100");
+    input.classList.add("opacity-0", "scale-95");
+    input.value = '';
+  }
+});
+
+lucide.createIcons();
+</script>
+</body>
+</html>

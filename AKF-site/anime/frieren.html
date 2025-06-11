@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Frieren: Beyond Journey's End - AKF Anime</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="globalsearch.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .episode-card { transition: transform 0.3s ease-in-out; }
+    .episode-modal { animation: fadeIn 0.3s ease-in-out forwards; }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    .bg-light { background-color: #1e293b; }
+    .text-light { color: white; }
+    .group:hover .episode-card { transform: scale(1.02); z-index: 10; filter: brightness(80%) blur(1px); }
+    
+    .fade-slide {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .fade-slide.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white">
+  
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center p-4 bg-gray-900 shadow text-white relative">
+    <div class="flex items-center gap-4">
+      <button id="menuToggle" class="p-2 rounded bg-gray-700 text-white z-10">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+      <a href="akf.html" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+    </div>
+    
+    <!-- Centered Search Bar in Navbar -->
+    <div class="flex-1 mx-4 hidden md:flex justify-center relative">
+      <input id="globalSearchBar" type="text" placeholder="Search anime..."
+        class="w-full max-w-md px-4 py-2 rounded-full bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-purple-500 outline-none transition placeholder-gray-400" />
+      <div id="globalSearchResults" class="absolute top-full left-0 w-full bg-gray-900 border border-purple-400 mt-2 rounded-xl shadow-lg z-50 hidden max-h-60 overflow-y-auto"></div>
+    </div>
+    
+    <div class="flex items-center gap-4 z-10">
+      <button id="searchToggle" class="p-2 rounded bg-gray-700 text-white">
+        <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-60 bg-gray-700 bg-opacity-60 border-r border-purple-400 text-white transform -translate-x-full transition-transform duration-300 z-50 shadow-xl">
+    <div class="flex items-center justify-between p-4 border-b border-purple-400">
+      <h2 class="text-lg font-bold text-purple-400 tracking-widest">AKF</h2>
+      <button onclick="toggleSidebar()">
+        <i data-lucide="x" class="w-5 h-5 text-white"></i>
+      </button>
+    </div>
+    <nav class="flex-1 px-5 py-4 space-y-4 text-sm font-semibold">
+      <a href="akf.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-500 hover:text-black transition">
+        <i data-lucide="home" class="w-5 h-5"></i> Home
+      </a>
+      <a href="popular.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-500 hover:text-black transition">
+        <i data-lucide="flame" class="w-5 h-5"></i> Popular
+      </a>
+      <a href="genre.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-500 hover:text-black transition">
+        <i data-lucide="layers" class="w-5 h-5"></i> Genres
+      </a>
+      <a href="favorites.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-500 hover:text-black transition">
+        <i data-lucide="star" class="w-5 h-5"></i> Favorites
+      </a>
+      <a href="account.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-500 hover:text-black transition">
+        <i data-lucide="user" class="w-5 h-5"></i> Account
+      </a>
+    </nav>
+  </aside>
+  
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40" onclick="toggleSidebar()"></div>
+
+  <!-- Main Content -->
+  <main id="mainContent" class="p-4 max-w-3xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+      <img src="https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=cover,format=auto,quality=85,width=1920/keyart/GG5H5XQX4-backdrop_wide" alt="Frieren: Beyond Journey's End" class="rounded-xl shadow w-full md:w-1/3" />
+      <div>
+        <h2 class="text-2xl font-bold mb-2">Frieren: Beyond Journey's End</h2>
+        <p class="text-sm text-gray-400 mb-2">Genres: Adventure, Fantasy, Drama</p>
+        <p class="text-base leading-relaxed">
+          The elf mage Frieren and her heroic party defeated the Demon King and brought peace to the land. But Frieren will long outlive her companions. After years of watching them die, she reflects on her past and sets out to fulfill the last wishes of her friends. This is the story of her journey to understand humanity.
+        </p>
+      </div>
+    </div>
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold mb-2">More Info</h3>
+      <ul class="list-disc list-inside space-y-1 text-sm">
+        <li>Episodes: 28 (Season 1)</li>
+        <li>Status: Completed</li>
+        <li>Studio: Madhouse</li>
+        <li>Original Run: September 2023 - March 2024</li>
+        <li>Source: Manga</li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- Character Cards -->
+  <section id="characters" class="p-4 max-w-4xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-purple-400 mb-6 border-b border-purple-400 inline-block">Main Characters</h2>
+    <div id="charactersContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+  </section>
+
+  <!-- Magic Spells Section -->
+  <section id="magic" class="px-4 py-8 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-purple-400 mb-6 border-b border-purple-400 inline-block">Magic Spells</h2>
+    <div id="magicContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- Key Moments Section -->
+  <section id="moments" class="px-4 py-8 text-white max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-purple-400 mb-6 border-b border-purple-400 inline-block">Key Moments</h2>
+    <div id="momentsContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- Episodes Section -->
+  <section class="p-4 max-w-5xl mx-auto mt-10">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-2xl font-bold text-purple-400">Episodes</h3>
+      <button id="viewMoreBtn"
+        class="flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-600 shadow hover:shadow-[0_0_10px_#a78bfa] transition-all duration-300">
+        <span class="icon-container">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-white transition-transform duration-300"></i>
+        </span>
+      </button>
+    </div>
+    <div id="episodeContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+  </section>
+
+  <!-- Download Modal -->
+  <div id="downloadModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+    <div class="bg-gray-900 p-6 rounded-xl max-w-sm w-full text-white relative">
+      <button id="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-purple-400">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h4 class="text-lg font-bold mb-4">Download From:</h4>
+      <div class="flex flex-wrap gap-4">
+        <a id="linkA" href="#" target="_blank" class="flex-1 text-center bg-purple-500 hover:bg-purple-600 text-white py-2 rounded shadow">A</a>
+        <a id="linkB" href="#" target="_blank" class="flex-1 text-center bg-purple-500 hover:bg-purple-600 text-white py-2 rounded shadow">B</a>
+        <a id="linkC" href="#" target="_blank" class="flex-1 text-center bg-purple-500 hover:bg-purple-600 text-white py-2 rounded shadow">C</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Data for Frieren: Beyond Journey's End
+  const episodes = [
+    {
+      num: 1,
+      title: "The Journey's End",
+      desc: "After defeating the Demon King, Frieren's party parts ways. Decades later, she attends Himmel's funeral.",
+      arc: "Prologue Arc",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 2,
+      title: "It Didn't Have to Be Magic",
+      desc: "Frieren takes on Fern as an apprentice and begins traveling with her to retrace her journey with the hero party.",
+      arc: "Journey Begins Arc",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 3,
+      title: "Killing Magic",
+      desc: "Frieren teaches Fern offensive magic and they encounter their first major threat since beginning their journey.",
+      arc: "Journey Begins Arc",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    }
+  ];
+
+  const characters = [
+    {
+      name: "Frieren",
+      img: "https://wallpapercave.com/wp/wp14392945.jpg",
+      role: "Elf Mage",
+      desc: "An ancient elf mage who defeated the Demon King. Now journeys to understand humanity and fulfill her friends' last wishes."
+    },
+    {
+      name: "Fern",
+      img: "https://wallpapercave.com/wp/wp14392950.jpg",
+      role: "Apprentice Mage",
+      desc: "Frieren's human apprentice who grows into a powerful mage under her guidance."
+    },
+    {
+      name: "Stark",
+      img: "https://wallpapercave.com/wp/wp14392955.jpg",
+      role: "Warrior",
+      desc: "A young warrior who joins Frieren and Fern on their journey, specializing in close combat."
+    },
+    {
+      name: "Himmel",
+      img: "https://wallpapercave.com/wp/wp14392960.jpg",
+      role: "Hero (Deceased)",
+      desc: "The leader of Frieren's original party who defeated the Demon King. Frieren reflects on their time together."
+    },
+    {
+      name: "Heiter",
+      img: "https://wallpapercave.com/wp/wp14392965.jpg",
+      role: "Priest (Deceased)",
+      desc: "The party's priest who took in Fern as an orphan before passing her to Frieren's care."
+    },
+    {
+      name: "Eisen",
+      img: "https://wallpapercave.com/wp/wp14392970.jpg",
+      role: "Dwarf Warrior",
+      desc: "The party's dwarf warrior who still lives but has retired from adventuring."
+    }
+  ];
+
+  const magicSpells = [
+    {
+      name: "Zoltraak",
+      type: "Offensive",
+      users: "Frieren, Fern",
+      img: "https://wallpapercave.com/wp/wp14392975.jpg",
+      desc: "A powerful human-killing magic spell that pierces through defenses. Frieren's signature attack."
+    },
+    {
+      name: "Defensive Magic",
+      type: "Defensive",
+      users: "All Mages",
+      img: "https://wallpapercave.com/wp/wp14392980.jpg",
+      desc: "Basic protective spells that create barriers against physical and magical attacks."
+    },
+    {
+      name: "Flight Magic",
+      type: "Utility",
+      users: "Frieren, Fern",
+      img: "https://wallpapercave.com/wp/wp14392985.jpg",
+      desc: "Allows the caster to levitate and fly through the air for transportation."
+    },
+    {
+      name: "Basic Attack Magic",
+      type: "Offensive",
+      users: "Fern",
+      img: "https://wallpapercave.com/wp/wp14392990.jpg",
+      desc: "Simple magical attacks that Fern first learned before mastering Zoltraak."
+    },
+    {
+      name: "Sensory Magic",
+      type: "Detection",
+      users: "Frieren",
+      img: "https://wallpapercave.com/wp/wp14392995.jpg",
+      desc: "Allows detection of magical energy and hidden enemies over vast distances."
+    },
+    {
+      name: "Transformation Magic",
+      type: "Illusion",
+      users: "Frieren",
+      img: "https://wallpapercave.com/wp/wp14393000.jpg",
+      desc: "Enables the caster to change their appearance or disguise themselves as others."
+    }
+  ];
+
+  const keyMoments = [
+    {
+      title: "Himmel's Funeral",
+      description: "Frieren attends the funeral of her old comrade, realizing how little she knew him",
+      episode: "Episode 1",
+      img: "https://wallpapercave.com/wp/wp14393005.jpg",
+      significance: "The moment that begins Frieren's journey of reflection"
+    },
+    {
+      title: "Fern's First Kill",
+      description: "Fern uses magic in combat for the first time against a demon",
+      episode: "Episode 3",
+      img: "https://wallpapercave.com/wp/wp14393010.jpg",
+      significance: "Fern's first step toward becoming a true mage"
+    },
+    {
+      title: "Stark Joins the Party",
+      description: "The young warrior Stark joins Frieren and Fern on their journey",
+      episode: "Episode 8",
+      img: "https://wallpapercave.com/wp/wp14393015.jpg",
+      significance: "The formation of the new adventuring party"
+    },
+    {
+      title: "Aura's Defeat",
+      description: "Frieren outwits and defeats the powerful demon Aura",
+      episode: "Episode 16",
+      img: "https://wallpapercave.com/wp/wp14393020.jpg",
+      significance: "Demonstrates Frieren's growth and cunning"
+    },
+    {
+      title: "First Class Exam",
+      description: "Fern and Stark take the mage and warrior certification exams",
+      episode: "Episode 21",
+      img: "https://wallpapercave.com/wp/wp14393025.jpg",
+      significance: "Shows how much the young adventurers have grown"
+    },
+    {
+      title: "Heavenly Paradise",
+      description: "Frieren reaches the resting place of souls to see Himmel one last time",
+      episode: "Episode 28",
+      img: "https://wallpapercave.com/wp/wp14393030.jpg",
+      significance: "The emotional conclusion to Frieren's journey"
+    }
+  ];
+
+  // Render Functions
+  const episodeContainer = document.getElementById("episodeContainer");
+  const modal = document.getElementById("downloadModal");
+  const closeModal = document.getElementById("closeModal");
+  const linkA = document.getElementById("linkA");
+  const linkB = document.getElementById("linkB");
+  const linkC = document.getElementById("linkC");
+  const viewMoreBtn = document.getElementById("viewMoreBtn");
+  const viewIcon = document.getElementById("viewIcon");
+
+  let expanded = false;
+
+  function renderEpisodes() {
+    episodeContainer.innerHTML = "";
+    const visibleEpisodes = expanded ? episodes : episodes.slice(0, 2);
+
+    visibleEpisodes.forEach((ep, index) => {
+      const card = document.createElement("div");
+      card.className = "fade-slide cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-gray-700 hover:scale-[1.02] transition-transform duration-300";
+
+      card.onclick = () => {
+        linkA.href = ep.linkA;
+        linkB.href = ep.linkB;
+        linkC.href = ep.linkC;
+        modal.classList.remove("hidden");
+      };
+
+      card.innerHTML = `
+        <div class="relative z-10 space-y-2">
+          <div class="text-sm font-semibold text-purple-400">Episode ${ep.num}</div>
+          <h4 class="text-md font-bold text-white leading-tight">${ep.title}</h4>
+          <p class="text-xs text-gray-300">${ep.desc}</p>
+          <span class="inline-block text-[10px] text-gray-400 mt-2">Arc: ${ep.arc}</span>
+        </div>
+        <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+      `;
+
+      episodeContainer.appendChild(card);
+      setTimeout(() => card.classList.add("show"), 100 * index);
+    });
+
+    const iconContainer = document.querySelector(".icon-container");
+    iconContainer.innerHTML = `
+      <i data-lucide="${expanded ? "chevron-up" : "chevron-down"}" 
+         class="w-5 h-5 text-white transition-transform duration-300">
+      </i>
+    `;
+    lucide.createIcons();
+  }
+
+  viewMoreBtn.addEventListener("click", () => {
+    expanded = !expanded;
+    renderEpisodes();
+  });
+
+  closeModal.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // Character rendering
+  const charactersContainer = document.getElementById("charactersContainer");
+  characters.forEach(char => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#8b5cf6] hover:border-purple-400";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${char.img}" alt="${char.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <h3 class="text-xl font-bold text-purple-400">${char.name}</h3>
+        <p class="text-sm text-purple-200"><strong>Role:</strong> ${char.role}</p>
+        <p class="text-sm text-gray-300 line-clamp-3">${char.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    charactersContainer.appendChild(card);
+  });
+
+  // Magic Spells rendering
+  const magicContainer = document.getElementById("magicContainer");
+  magicSpells.forEach(spell => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#8b5cf6] hover:border-purple-400";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${spell.img}" alt="${spell.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-purple-300">${spell.type}</div>
+        <h3 class="text-xl font-bold text-purple-400">${spell.name}</h3>
+        <p class="text-sm text-purple-200"><strong>Users:</strong> ${spell.users}</p>
+        <p class="text-sm text-gray-300 line-clamp-3">${spell.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    magicContainer.appendChild(card);
+  });
+
+  // Key Moments rendering
+  const momentsContainer = document.getElementById("momentsContainer");
+  keyMoments.forEach(moment => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#8b5cf6] hover:border-purple-400";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${moment.img}" alt="${moment.title}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-purple-300">${moment.episode}</div>
+        <h3 class="text-xl font-bold text-purple-300">${moment.title}</h3>
+        <p class="text-sm text-gray-300">${moment.description}</p>
+        <p class="text-xs italic text-purple-200 mt-2">${moment.significance}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    momentsContainer.appendChild(card);
+  });
+
+  // INITIAL RENDER
+  renderEpisodes();
+
+  // Sidebar toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+
+  // Search toggle
+  const searchToggle = document.getElementById("searchToggle");
+  const searchInput = document.getElementById("globalSearchBar");
+
+  searchToggle.addEventListener("click", () => {
+    if (searchInput) {
+      searchInput.focus();
+    }
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

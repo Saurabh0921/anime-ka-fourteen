@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Demon Slayer - AKF Anime</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="globalsearch.js"></script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .episode-card { transition: transform 0.3s ease-in-out; }
+    .episode-modal { animation: fadeIn 0.3s ease-in-out forwards; }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    .bg-light { background-color: #1e293b; }
+    .text-light { color: white; }
+    .group:hover .episode-card { transform: scale(1.02); z-index: 10; filter: brightness(80%) blur(1px); }
+    
+
+  .fade-slide {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .fade-slide.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  </style>
+</head>
+<body class="bg-gray-900 text-white">
+  
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center p-4 bg-gray-900 shadow text-white relative">
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" class="p-2 rounded bg-gray-700 text-white z-10">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+    <a href="akf.html" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+  </div>
+  
+  
+  
+  <!-- Centered Search Bar in Navbar -->
+<div class="flex-1 mx-4 hidden md:flex justify-center relative">
+  <input id="globalSearchBar" type="text" placeholder="Search anime..."
+    class="w-full max-w-md px-4 py-2 rounded-full bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-red-500 outline-none transition placeholder-gray-400" />
+  <div id="globalSearchResults" class="absolute top-full left-0 w-full bg-gray-900 border border-red-400 mt-2 rounded-xl shadow-lg z-50 hidden max-h-60 overflow-y-auto"></div>
+</div>
+  
+  <div class="flex items-center gap-4 z-10">
+    <button id="searchToggle" class="p-2 rounded bg-gray-700 text-white">
+      <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+    </button>
+  
+  
+  </div>
+  
+</nav>
+
+<!-- Sidebar -->
+
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-60 bg-gray-700 bg-opacity-60 border-r border-red-400 text-white transform -translate-x-full transition-transform duration-300 z-50 shadow-xl">
+  <div class="flex items-center justify-between p-4 border-b border-red-400">
+    <h2 class="text-lg font-bold text-red-400 tracking-widest">AKF</h2>
+    <button onclick="toggleSidebar()">
+      <i data-lucide="x" class="w-5 h-5 text-white"></i>
+    </button>
+  </div>
+  <nav class="flex-1 px-5 py-4 space-y-4 text-sm font-semibold">
+    <a href="akf.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+      <i data-lucide="home" class="w-5 h-5"></i> Home
+    </a>
+    <a href="popular.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+      <i data-lucide="flame" class="w-5 h-5"></i> Popular
+    </a>
+    <a href="genre.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+      <i data-lucide="layers" class="w-5 h-5"></i> Genres
+    </a>
+    <a href="favorites.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+      <i data-lucide="star" class="w-5 h-5"></i> Favorites
+    </a>
+    <a href="account.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-black transition">
+      <i data-lucide="user" class="w-5 h-5"></i> Account
+    </a>
+  </nav>
+  
+  
+  
+</aside>
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40" onclick="toggleSidebar()"></div>
+<!-- Main Content -->
+<main id="mainContent" class="p-4 max-w-3xl mx-auto">
+  <div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+    <img src="https://staticg.sportskeeda.com/editor/2022/11/771dc-16689530744106-1920.jpg" alt="Demon Slayer" class="rounded-xl shadow w-full md:w-1/3" />
+    <div>
+      <h2 class="text-2xl font-bold mb-2">Demon Slayer: Kimetsu no Yaiba</h2>
+      <p class="text-sm text-gray-400 mb-2">Genres: Action, Supernatural, Historical</p>
+      <p class="text-base leading-relaxed">
+        Tanjiro Kamado becomes a demon slayer after his family is slaughtered by demons and his sister Nezuko is turned into one. With powerful allies, he takes on demons while uncovering the mysteries of demonkind and searching for a cure.
+      </p>
+    </div>
+  </div>
+  <div class="mt-6">
+    <h3 class="text-lg font-semibold mb-2">More Info</h3>
+    <ul class="list-disc list-inside space-y-1 text-sm">
+      <li>Episodes: 55 (as of Swordsmith Village Arc)</li>
+      <li>Status: Ongoing</li>
+      <li>Studio: Ufotable</li>
+      <li>Original Run: 2019 – Present</li>
+    </ul>
+  </div>
+</main>
+<!-- Character Cards -->
+<section id="characters" class="p-4 max-w-4xl mx-auto mt-10">
+  <h2 class="text-2xl font-bold text-red-400 mb-6 border-b border-red-400 inline-block">Main Characters</h2>
+  <div id="charactersContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+</section>
+
+<!-- Breathing Techniques Section -->
+<section id="techniques" class="px-4 py-8 max-w-5xl mx-auto">
+  <h2 class="text-2xl font-bold text-red-400 mb-6 border-b border-red-400 inline-block">Breathing Techniques</h2>
+  <div id="techniqueContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
+<!-- Epic Battles Section -->
+<section id="fights" class="px-4 py-8 text-white max-w-5xl mx-auto">
+  <h2 class="text-2xl font-bold text-red-400 mb-6 border-b border-red-400 inline-block">Epic Battles</h2>
+  <div id="fightContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
+<!-- Episodes Section -->
+<section class="p-4 max-w-5xl mx-auto mt-10">
+  <div class="flex items-center justify-between mb-4">
+  <h3 class="text-2xl font-bold text-red-400">Episodes</h3>
+  <button id="viewMoreBtn"
+    class="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 shadow hover:shadow-[0_0_10px_#f87171] transition-all duration-300">
+    <span class="icon-container">
+  <i data-lucide="chevron-down" class="w-5 h-5 text-white transition-transform duration-300"></i>
+</span>
+  </button>
+</div>
+  <div id="episodeContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+</section>
+<!-- Download Modal -->
+<div id="downloadModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+  <div class="bg-gray-900 p-6 rounded-xl max-w-sm w-full text-white relative">
+    <button id="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-red-400">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+    <h4 class="text-lg font-bold mb-4">Download From:</h4>
+    <div class="flex flex-wrap gap-4">
+      <a id="linkA" href="#" target="_blank" class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded shadow">A</a>
+      <a id="linkB" href="#" target="_blank" class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded shadow">B</a>
+      <a id="linkC" href="#" target="_blank" class="flex-1 text-center bg-red-500 hover:bg-red-600 text-white py-2 rounded shadow">C</a>
+    </div>
+  </div>
+</div>
+<script>
+const episodes = [
+  {
+    num: 1,
+    title: "Cruelty",
+    desc: "Tanjiro returns home to a horrifying scene.",
+    arc: "Season 1",
+    linkA: "https://example.com/ep1-a",
+    linkB: "https://example.com/ep1-b",
+    linkC: "https://example.com/ep1-c"
+  },
+  {
+    num: 2,
+    title: "Trainer Sakonji Urokodaki",
+    desc: "Tanjiro meets his mentor.",
+    arc: "Season 1",
+    linkA: "https://example.com/ep2-a",
+    linkB: "https://example.com/ep2-b",
+    linkC: "https://example.com/ep2-c"
+  },
+  {
+    num: 3,
+    title: "Sabito and Makomo",
+    desc: "Training begins in earnest.",
+    arc: "Season 1",
+    linkA: "https://example.com/ep3-a",
+    linkB: "https://example.com/ep3-b",
+    linkC: "https://example.com/ep3-c"
+  }
+];
+
+const episodeContainer = document.getElementById("episodeContainer");
+const modal = document.getElementById("downloadModal");
+const closeModal = document.getElementById("closeModal");
+const linkA = document.getElementById("linkA");
+const linkB = document.getElementById("linkB");
+const linkC = document.getElementById("linkC");
+const viewMoreBtn = document.getElementById("viewMoreBtn");
+const viewIcon = document.getElementById("viewIcon");
+
+let expanded = false;
+
+function renderEpisodes() {
+  episodeContainer.innerHTML = "";
+
+  const visibleEpisodes = expanded ? episodes : episodes.slice(0, 2);
+
+  visibleEpisodes.forEach((ep, index) => {
+    const card = document.createElement("div");
+    card.className =
+      "fade-slide cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-gray-700 hover:scale-[1.02] transition-transform duration-300";
+
+    card.onclick = () => {
+      linkA.href = ep.linkA;
+      linkB.href = ep.linkB;
+      linkC.href = ep.linkC;
+      modal.classList.remove("hidden");
+    };
+
+    card.innerHTML = `
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-red-400">Episode ${ep.num}</div>
+        <h4 class="text-md font-bold text-white leading-tight">${ep.title}</h4>
+        <p class="text-xs text-gray-300">${ep.desc}</p>
+        <span class="inline-block text-[10px] text-gray-400 mt-2">Arc: ${ep.arc}</span>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+
+    episodeContainer.appendChild(card);
+    setTimeout(() => card.classList.add("show"), 100 * index);
+  });
+
+  // Toggle icon
+  const iconContainer = document.querySelector(".icon-container");
+
+iconContainer.innerHTML = `
+  <i data-lucide="${expanded ? "chevron-up" : "chevron-down"}" 
+     class="w-5 h-5 text-white transition-transform duration-300">
+  </i>
+`;
+lucide.createIcons();
+}
+
+viewMoreBtn.addEventListener("click", () => {
+  expanded = !expanded;
+  renderEpisodes();
+});
+
+closeModal.addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
+
+
+// INITIAL RENDER
+renderEpisodes();
+</script>
+
+<script>
+const characters = [
+  {
+    name: "Tanjiro Kamado",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7wzNmkH6-qBqXDA6dFS-eDSbRuZOFBYQAqOM6HXYhhByfxexx0swKLRQR&s=10",
+    role: "Protagonist",
+    desc: "A kind-hearted boy who becomes a demon slayer after his family is slaughtered."
+  },
+  {
+    name: "Nezuko Kamado",
+    img: "https://wallpapers.com/images/hd/nezuko-kamado-demon-form-1yq2ok19gzxpskdz.jpg",
+    role: "Demon Sister",
+    desc: "Tanjiro's younger sister turned demon who fights to protect humanity."
+  },
+  {
+    name: "Zenitsu Agatsuma",
+    img: "https://staticg.sportskeeda.com/editor/2023/08/48ae4-16911624623892-1920.jpg",
+    role: "Thunder Breather",
+    desc: "A cowardly yet powerful swordsman who uses Thunder Breathing."
+  },
+  {
+    name: "Inosuke Hashibira",
+    img: "https://i.pinimg.com/736x/27/93/70/2793700b4207aa259f51846ac3a1e7f6.jpg",
+    role: "Beast Breather",
+    desc: "Raised by boars, Inosuke uses Beast Breathing and fights with two blades."
+  }
+];
+
+const charactersContainer = document.getElementById("charactersContainer");
+
+characters.forEach(char => {
+  const card = document.createElement("div");
+  card.className =
+    "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#ff4d4d] hover:border-red-400";
+
+  card.innerHTML = `
+    <div class="absolute inset-0 z-0">
+      <img src="${char.img}" alt="${char.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+    </div>
+    <div class="relative z-10 space-y-2">
+      <h3 class="text-xl font-bold text-red-400">${char.name}</h3>
+      <p class="text-sm text-orange-200"><strong>Role:</strong> ${char.role}</p>
+      <p class="text-sm text-gray-300 line-clamp-3">${char.desc}</p>
+    </div>
+    <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+  `;
+
+  charactersContainer.appendChild(card);
+});
+<!-- breathingTechniques -->
+const breathingTechniques = [
+  {
+    name: "Water Breathing",
+    type: "Style",
+    users: "Tanjiro Kamado, Sakonji Urokodaki",
+    img: "https://staticg.sportskeeda.com/editor/2022/11/69c5e-16679163770966-1920.jpg",
+    desc: "Mimics the flow of water; a versatile and balanced style."
+  },
+  {
+    name: "Thunder Breathing",
+    type: "Style",
+    users: "Zenitsu Agatsuma",
+    img: "https://wallpapers.com/images/featured/zenitsu-4k-zgxj4d8tb2jqlt8h.jpg",
+    desc: "Fast, powerful strikes; most effective in a single overwhelming blow."
+  },
+  {
+    name: "Beast Breathing",
+    type: "Style",
+    users: "Inosuke Hashibira",
+    img: "https://i.pinimg.com/originals/f6/7b/e9/f67be94b847f90580b18fd70c9f79bd3.jpg",
+    desc: "Unorthodox style developed in the wild; relies on instinct and dual blades."
+  },
+  {
+    name: "Flame Breathing",
+    type: "Style",
+    users: "Kyojuro Rengoku",
+    img: "https://wallpapercave.com/wp/wp8184830.jpg",
+    desc: "Powerful and noble technique that mimics fire’s intensity and passion."
+  },
+  {
+    name: "Sound Breathing",
+    type: "Style",
+    users: "Tengen Uzui",
+    img: "https://i.pinimg.com/736x/89/80/8a/89808a6aa7193c9290e66e62f86071a5.jpg",
+    desc: "Uses rhythm and explosive techniques to confuse and destroy enemies."
+  },
+  {
+    name: "Love Breathing",
+    type: "Style",
+    users: "Mitsuri Kanroji",
+    img: "https://cdn.animenewsnetwork.com/thumbnails/max700x700/cms/news.6/186874/mitsuri.png",
+    desc: "Derived from Flame Breathing; flexible and swift movements powered by emotion."
+  }
+];
+
+const techniqueContainer = document.getElementById("techniqueContainer");
+
+breathingTechniques.forEach(tech => {
+  const card = document.createElement("div");
+  card.className =
+    "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#f43f5e] hover:border-red-400";
+
+  card.innerHTML = `
+    <div class="absolute inset-0 z-0">
+      <img src="${tech.img}" alt="${tech.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+    </div>
+    <div class="relative z-10 space-y-2">
+      <div class="text-sm font-semibold text-red-300">${tech.type}</div>
+      <h3 class="text-xl font-bold text-red-400">${tech.name}</h3>
+      <p class="text-sm text-orange-200"><strong>Users:</strong> ${tech.users}</p>
+      <p class="text-sm text-gray-300 line-clamp-3">${tech.desc}</p>
+    </div>
+    <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+  `;
+
+  techniqueContainer.appendChild(card);
+});
+
+<!-- Epic Battles Section Script-->
+const epicFights = [
+  {
+    title: "Tanjiro & Nezuko vs. Rui",
+    fighters: "Tanjiro Kamado & Nezuko Kamado vs. Rui",
+    episode: "Episode 19 (Season 1)",
+    img: "https://wallpapercave.com/wp/wp7250387.jpg",
+    desc: "Tanjiro and Nezuko team up in a beautifully animated and emotionally powerful battle against the Lower Moon demon Rui."
+  },
+  {
+    title: "Rengoku vs. Akaza",
+    fighters: "Kyojuro Rengoku vs. Akaza",
+    episode: "Demon Slayer: Mugen Train Movie",
+    img: "https://wallpapercave.com/wp/wp9648407.jpg",
+    desc: "An intense, emotional battle between Flame Hashira Rengoku and Upper Moon 3 Akaza with incredible visuals and heartfelt moments."
+  },
+  {
+    title: "Tengen & Trio vs. Gyutaro & Daki",
+    fighters: "Tengen Uzui, Tanjiro, Inosuke, Zenitsu vs. Gyutaro & Daki",
+    episode: "Entertainment District Arc Final Episodes",
+    img: "https://i.ytimg.com/vi/WByQMCJ7tKk/maxresdefault.jpg",
+    desc: "A flashy, high-stakes fight showcasing teamwork and strength against dual Upper Moon demons."
+  },
+  {
+    title: "Tanjiro vs. Hantengu (Clones)",
+    fighters: "Tanjiro Kamado vs. Hantengu's Clones",
+    episode: "Swordsmith Village Arc",
+    img: "https://wallpapercave.com/wp/wp12200445.jpg",
+    desc: "Tanjiro battles the ever-regenerating and emotionally split clones of Hantengu."
+  },
+  {
+    title: "Muichiro vs. Gyokko",
+    fighters: "Muichiro Tokito vs. Gyokko",
+    episode: "Swordsmith Village Arc",
+    img: "https://animecorner.me/wp-content/uploads/2023/05/Muichiro-vs-Gyokko-Demon-Slayer-Episode-10.jpg",
+    desc: "Mist Hashira Muichiro displays calm power and mastery of Mist Breathing in his fight with Upper Moon 5."
+  },
+  {
+    title: "Mitsuri vs. Hantengu's Final Form",
+    fighters: "Mitsuri Kanroji vs. Hantengu's Form",
+    episode: "Swordsmith Village Arc",
+    img: "https://otakukart.com/wp-content/uploads/2023/05/176.png",
+    desc: "Love Hashira Mitsuri showcases incredible strength and flexibility while defending against Hantengu."
+  }
+];
+
+const fightContainer = document.getElementById("fightContainer");
+
+epicFights.forEach(fight => {
+  const card = document.createElement("div");
+  card.className =
+    "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#ff4d4d] hover:border-red-400";
+
+  card.innerHTML = `
+    <div class="absolute inset-0 z-0">
+      <img src="${fight.img}" alt="${fight.title}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+    </div>
+    <div class="relative z-10 space-y-2">
+      <div class="text-sm font-semibold text-red-300">${fight.fighters}</div>
+      <h3 class="text-xl font-bold text-orange-300">${fight.title}</h3>
+      <p class="text-sm italic text-gray-400">${fight.episode}</p>
+      <p class="text-sm text-gray-300 line-clamp-3">${fight.desc}</p>
+    </div>
+    <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-red-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+  `;
+
+  fightContainer.appendChild(card);
+});
+
+
+
+</script>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+
+  lucide.createIcons();
+</script>
+<script>
+  const searchToggle = document.getElementById("searchToggle");
+  const searchInput = document.getElementById("globalSearchBar");
+
+  searchToggle.addEventListener("click", () => {
+    if (searchInput) {
+      searchInput.focus();
+    }
+  });
+  
+
+
+</script>
+
+</body>
+</html>

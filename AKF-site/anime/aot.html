@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Attack on Titan - AKF Anime</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    html { scroll-behavior: smooth; }
+    
+    /* AOT Color Theme */
+    .text-aot { color: #c5c6c7; }
+    .text-aot-accent { color: #e6b422; }
+    .bg-aot { background-color: #1a1a2e; }
+    .bg-aot-accent { background-color: #e6b422; }
+    .border-aot { border-color: #4a4e69; }
+    .hover-aot:hover { background-color: #2b2d42; }
+    
+    /* Card Styles */
+    .episode-card { 
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    .episode-card:hover { 
+      transform: scale(1.03); 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    
+    /* Animation Classes */
+    .fade-slide {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .fade-slide.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Special Effects */
+    .scout-regiment-mask::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('https://i.pinimg.com/originals/7b/3d/2e/7b3d2e5e9a8f5e5e5e5e5e5e5e5e5e5e.png') center/contain no-repeat;
+      opacity: 0.03;
+      pointer-events: none;
+    }
+    
+    .hover-glow:hover {
+      box-shadow: 0 0 15px rgba(230, 180, 34, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-aot text-aot scout-regiment-mask">
+  
+  <!-- Navbar - Military Style -->
+  <nav class="flex justify-between items-center p-4 bg-gray-900 bg-opacity-90 backdrop-blur-sm sticky top-0 z-50 border-b border-aot">
+    <div class="flex items-center gap-4">
+      <button id="menuToggle" class="p-2 rounded bg-gray-800 text-aot-accent hover-aot transition-all">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+      <a href="akf.html" class="text-xl font-bold hover:underline text-aot-accent">AKF - Anime Ka Fourteen</a>
+    </div>
+    
+    <!-- Search Bar -->
+    <div class="flex-1 mx-4 hidden md:flex justify-center relative">
+      <input id="globalSearchBar" type="text" placeholder="Search anime..."
+        class="w-full max-w-md px-4 py-2 rounded-full bg-gray-800 text-white border border-aot focus:ring-2 focus:ring-aot-accent outline-none transition placeholder-gray-400" />
+      <div id="globalSearchResults" class="absolute top-full left-0 w-full bg-gray-900 border border-aot mt-2 rounded-xl shadow-lg z-50 hidden max-h-60 overflow-y-auto"></div>
+    </div>
+    
+    <div class="flex items-center gap-4 z-10">
+      <button id="searchToggle" class="p-2 rounded bg-gray-800 text-aot-accent hover-aot">
+        <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Sidebar - Dark Military Theme -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-60 bg-gray-900 bg-opacity-95 border-r border-aot text-aot transform -translate-x-full transition-transform duration-300 z-50 shadow-xl backdrop-blur-sm">
+    <div class="flex items-center justify-between p-4 border-b border-aot">
+      <h2 class="text-lg font-bold text-aot-accent tracking-widest">AKF</h2>
+      <button onclick="toggleSidebar()" class="text-aot hover:text-aot-accent">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <nav class="flex-1 px-5 py-4 space-y-4 text-sm font-semibold">
+      <a href="akf.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-aot-accent hover:text-black transition-all">
+        <i data-lucide="home" class="w-5 h-5"></i> Home
+      </a>
+      <a href="popular.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-aot-accent hover:text-black transition-all">
+        <i data-lucide="flame" class="w-5 h-5"></i> Popular
+      </a>
+      <a href="genre.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-aot-accent hover:text-black transition-all">
+        <i data-lucide="layers" class="w-5 h-5"></i> Genres
+      </a>
+      <a href="favorites.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-aot-accent hover:text-black transition-all">
+        <i data-lucide="star" class="w-5 h-5"></i> Favorites
+      </a>
+      <a href="account.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-aot-accent hover:text-black transition-all">
+        <i data-lucide="user" class="w-5 h-5"></i> Account
+      </a>
+    </nav>
+  </aside>
+  
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-60 hidden z-40" onclick="toggleSidebar()"></div>
+
+  <!-- Main Content -->
+  <main id="mainContent" class="p-4 max-w-3xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+      <img src="https://wallpapercave.com/wp/wp4782876.jpg" alt="Attack on Titan" class="rounded-xl shadow w-full md:w-1/3 hover-glow transition-all" />
+      <div>
+        <h2 class="text-2xl font-bold mb-2 text-aot-accent">Attack on Titan</h2>
+        <p class="text-sm text-gray-400 mb-2">Genres: Action, Dark Fantasy, Military</p>
+        <p class="text-base leading-relaxed text-aot">
+          In a world where humanity lives inside cities surrounded by enormous walls that protect them from gigantic man-eating humanoids called Titans, 
+          the story follows Eren Yeager, who vows to exterminate the Titans after they bring about the destruction of his hometown.
+        </p>
+      </div>
+    </div>
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold mb-2 text-aot-accent">More Info</h3>
+      <ul class="list-disc list-inside space-y-1 text-sm text-aot">
+        <li>Episodes: 88 (Completed)</li>
+        <li>Status: Finished</li>
+        <li>Studio: Wit Studio (S1-3), MAPPA (S4)</li>
+        <li>Original Run: 2013 - 2023</li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- Character Cards -->
+  <section id="characters" class="p-4 max-w-4xl mx-auto mt-10">
+    <h2 class="text-2xl font-bold text-aot-accent mb-6 border-b border-aot inline-block">Main Characters</h2>
+    <div id="charactersContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+  </section>
+
+  <!-- Titan Forms Section -->
+  <section id="titans" class="px-4 py-8 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-aot-accent mb-6 border-b border-aot inline-block">Titan Shifters</h2>
+    <div id="titanContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- Epic Battles Section -->
+  <section id="fights" class="px-4 py-8 max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold text-aot-accent mb-6 border-b border-aot inline-block">Epic Battles</h2>
+    <div id="fightContainer" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </section>
+
+  <!-- Seasons Section -->
+  <section class="p-4 max-w-5xl mx-auto mt-10">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-2xl font-bold text-aot-accent">Seasons</h3>
+      <button id="viewMoreBtn"
+        class="flex items-center justify-center w-8 h-8 rounded-full bg-aot-accent hover:bg-yellow-600 shadow hover:shadow-[0_0_10px_#e6b422] transition-all duration-300">
+        <span class="icon-container">
+          <i data-lucide="chevron-down" class="w-5 h-5 text-white transition-transform duration-300"></i>
+        </span>
+      </button>
+    </div>
+    <div id="seasonContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+  </section>
+
+  <!-- Download Modal -->
+  <div id="downloadModal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+    <div class="bg-gray-900 p-6 rounded-xl max-w-sm w-full text-white relative border border-aot-accent">
+      <button id="closeModal" class="absolute top-2 right-2 text-gray-400 hover:text-aot-accent">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <h4 class="text-lg font-bold mb-4 text-aot-accent">Download From:</h4>
+      <div class="flex flex-wrap gap-4">
+        <a id="linkA" href="#" target="_blank" class="flex-1 text-center bg-aot-accent hover:bg-yellow-600 text-black py-2 rounded shadow font-bold">1080p</a>
+        <a id="linkB" href="#" target="_blank" class="flex-1 text-center bg-aot-accent hover:bg-yellow-600 text-black py-2 rounded shadow font-bold">720p</a>
+        <a id="linkC" href="#" target="_blank" class="flex-1 text-center bg-aot-accent hover:bg-yellow-600 text-black py-2 rounded shadow font-bold">480p</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // AOT Data
+  const seasons = [
+    {
+      num: 1,
+      title: "Season 1",
+      desc: "The fall of Wall Maria and Eren's transformation into a Titan.",
+      episodes: "1-25",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 2,
+      title: "Season 2",
+      desc: "The revelation of the Armored and Colossal Titans' identities.",
+      episodes: "26-37",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 3,
+      title: "Season 3 Part 1",
+      desc: "The coup d'état and battle for the throne.",
+      episodes: "38-49",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 4,
+      title: "Season 3 Part 2",
+      desc: "The truth about the world beyond the walls.",
+      episodes: "50-59",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    },
+    {
+      num: 5,
+      title: "The Final Season",
+      desc: "The war between Paradis and Marley.",
+      episodes: "60-88",
+      linkA: "#",
+      linkB: "#",
+      linkC: "#"
+    }
+  ];
+
+  const characters = [
+    {
+      name: "Eren Yeager",
+      img: "https://wallpapercave.com/wp/wp4782876.jpg",
+      role: "Protagonist / Attack Titan",
+      desc: "Driven by revenge after his mother's death, he joins the Survey Corps to exterminate the Titans."
+    },
+    {
+      name: "Mikasa Ackerman",
+      img: "https://wallpapercave.com/wp/wp4782883.jpg",
+      role: "Soldier / Eren's Adoptive Sister",
+      desc: "A talented fighter who protects Eren at all costs. The last descendant of the Asian clan."
+    },
+    {
+      name: "Armin Arlert",
+      img: "https://wallpapercave.com/wp/wp4782890.jpg",
+      role: "Strategist / Colossal Titan",
+      desc: "Eren's childhood friend whose intelligence and tactical mind make him invaluable."
+    },
+    {
+      name: "Levi Ackerman",
+      img: "https://wallpapercave.com/wp/wp4782897.jpg",
+      role: "Captain / Humanity's Strongest Soldier",
+      desc: "The squad captain of the Special Operations Squad within the Survey Corps."
+    },
+    {
+      name: "Erwin Smith",
+      img: "https://wallpapercave.com/wp/wp4782904.jpg",
+      role: "Commander of Survey Corps",
+      desc: "Brilliant commander who leads dangerous expeditions outside the walls."
+    },
+    {
+      name: "Zeke Yeager",
+      img: "https://wallpapercave.com/wp/wp4782911.jpg",
+      role: "Beast Titan / Warrior",
+      desc: "Eren's half-brother and the holder of the Beast Titan's power."
+    }
+  ];
+
+  const titanShifters = [
+    {
+      name: "Attack Titan",
+      type: "Shifter",
+      users: "Eren Yeager, Grisha Yeager",
+      img: "https://wallpapercave.com/wp/wp4782918.jpg",
+      desc: "Known for its relentless fighting style and ability to see memories of future inheritors."
+    },
+    {
+      name: "Colossal Titan",
+      type: "Shifter",
+      users: "Armin Arlert, Bertholdt Hoover",
+      img: "https://wallpapercave.com/wp/wp4782925.jpg",
+      desc: "60-meter tall titan that can emit superheated steam and cause massive explosions."
+    },
+    {
+      name: "Armored Titan",
+      type: "Shifter",
+      users: "Reiner Braun",
+      img: "https://wallpapercave.com/wp/wp4782932.jpg",
+      desc: "Covered in armor plating, making it nearly invulnerable to conventional attacks."
+    },
+    {
+      name: "Female Titan",
+      type: "Shifter",
+      users: "Annie Leonhart",
+      img: "https://wallpapercave.com/wp/wp4782939.jpg",
+      desc: "Exceptional speed and the ability to harden parts of its body and attract pure Titans."
+    },
+    {
+      name: "Beast Titan",
+      type: "Shifter",
+      users: "Zeke Yeager",
+      img: "https://wallpapercave.com/wp/wp4782946.jpg",
+      desc: "Monkey-like titan with incredible throwing ability and power to control pure Titans."
+    },
+    {
+      name: "Founding Titan",
+      type: "Shifter",
+      users: "Eren Yeager, Ymir Fritz",
+      img: "https://wallpapercave.com/wp/wp4782953.jpg",
+      desc: "The progenitor of all Titans with the power to control and alter memories of Eldians."
+    }
+  ];
+
+  const epicBattles = [
+    {
+      title: "Battle of Trost",
+      fighters: "Survey Corps vs Titans",
+      episode: "Season 1",
+      img: "https://wallpapercave.com/wp/wp4782960.jpg",
+      desc: "The first major battle after Wall Maria falls, where Eren first demonstrates his Titan powers."
+    },
+    {
+      title: "Clash of the Titans",
+      fighters: "Eren vs Reiner & Bertholdt",
+      episode: "Season 2",
+      img: "https://wallpapercave.com/wp/wp4782967.jpg",
+      desc: "The shocking revelation of the Armored and Colossal Titans' identities."
+    },
+    {
+      title: "Return to Shiganshina",
+      fighters: "Survey Corps vs Beast Titan",
+      episode: "Season 3 Part 2",
+      img: "https://wallpapercave.com/wp/wp4782974.jpg",
+      desc: "The deadly battle to reclaim Wall Maria and reach Eren's basement."
+    },
+    {
+      title: "War for Paradis",
+      fighters: "Paradis vs Marley",
+      episode: "The Final Season",
+      img: "https://wallpapercave.com/wp/wp4782981.jpg",
+      desc: "The full-scale war between Eldia and Marley forces with devastating consequences."
+    },
+    {
+      title: "Rumbling",
+      fighters: "Alliance vs Eren",
+      episode: "The Final Season Part 2",
+      img: "https://wallpapercave.com/wp/wp4782988.jpg",
+      desc: "The final battle to stop Eren's world-ending Rumbling."
+    }
+  ];
+
+  // Render Functions (same structure as reference)
+  const seasonContainer = document.getElementById("seasonContainer");
+  const modal = document.getElementById("downloadModal");
+  const closeModal = document.getElementById("closeModal");
+  const linkA = document.getElementById("linkA");
+  const linkB = document.getElementById("linkB");
+  const linkC = document.getElementById("linkC");
+  const viewMoreBtn = document.getElementById("viewMoreBtn");
+
+  let expanded = false;
+
+  function renderSeasons() {
+    seasonContainer.innerHTML = "";
+    const visibleSeasons = expanded ? seasons : seasons.slice(0, 3);
+
+    visibleSeasons.forEach((season, index) => {
+      const card = document.createElement("div");
+      card.className = "fade-slide cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-gray-700 hover:scale-[1.03] transition-all duration-300 hover-glow";
+
+      card.onclick = () => {
+        linkA.href = season.linkA;
+        linkB.href = season.linkB;
+        linkC.href = season.linkC;
+        modal.classList.remove("hidden");
+      };
+
+      card.innerHTML = `
+        <div class="relative z-10 space-y-2">
+          <div class="text-sm font-semibold text-aot-accent">${season.title}</div>
+          <h4 class="text-md font-bold text-white leading-tight">Episodes ${season.episodes}</h4>
+          <p class="text-xs text-gray-300">${season.desc}</p>
+        </div>
+        <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-aot-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+      `;
+
+      seasonContainer.appendChild(card);
+      setTimeout(() => card.classList.add("show"), 100 * index);
+    });
+
+    const iconContainer = document.querySelector(".icon-container");
+    iconContainer.innerHTML = `
+      <i data-lucide="${expanded ? "chevron-up" : "chevron-down"}" 
+         class="w-5 h-5 text-white transition-transform duration-300">
+      </i>
+    `;
+    lucide.createIcons();
+  }
+
+  viewMoreBtn.addEventListener("click", () => {
+    expanded = !expanded;
+    renderSeasons();
+  });
+
+  closeModal.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // Character rendering
+  const charactersContainer = document.getElementById("charactersContainer");
+  characters.forEach(char => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#e6b422] hover:border-yellow-200";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${char.img}" alt="${char.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <h3 class="text-xl font-bold text-aot-accent">${char.name}</h3>
+        <p class="text-sm text-gray-300"><strong>Role:</strong> ${char.role}</p>
+        <p class="text-sm text-gray-400 line-clamp-3">${char.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-aot-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    charactersContainer.appendChild(card);
+  });
+
+  // Titan Shifters rendering
+  const titanContainer = document.getElementById("titanContainer");
+  titanShifters.forEach(titan => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#e6b422] hover:border-yellow-200";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${titan.img}" alt="${titan.name}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-gray-400">${titan.type}</div>
+        <h3 class="text-xl font-bold text-aot-accent">${titan.name}</h3>
+        <p class="text-sm text-gray-300"><strong>Users:</strong> ${titan.users}</p>
+        <p class="text-sm text-gray-400 line-clamp-3">${titan.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-aot-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    titanContainer.appendChild(card);
+  });
+
+  // Battles rendering
+  const fightContainer = document.getElementById("fightContainer");
+  epicBattles.forEach(fight => {
+    const card = document.createElement("div");
+    card.className = "relative group overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 p-4 border border-transparent transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_0_20px_#e6b422] hover:border-yellow-200";
+
+    card.innerHTML = `
+      <div class="absolute inset-0 z-0">
+        <img src="${fight.img}" alt="${fight.title}" class="w-full h-full object-cover opacity-10 blur-sm scale-110" />
+      </div>
+      <div class="relative z-10 space-y-2">
+        <div class="text-sm font-semibold text-gray-400">${fight.fighters}</div>
+        <h3 class="text-xl font-bold text-aot-accent">${fight.title}</h3>
+        <p class="text-sm italic text-gray-400">${fight.episode}</p>
+        <p class="text-sm text-gray-300 line-clamp-3">${fight.desc}</p>
+      </div>
+      <div class="absolute inset-0 rounded-2xl z-0 pointer-events-none bg-aot-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+    `;
+    fightContainer.appendChild(card);
+  });
+
+  // INITIAL RENDER
+  renderSeasons();
+
+  // Sidebar toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+    document.body.classList.toggle('overflow-hidden');
+  });
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+    document.body.classList.toggle('overflow-hidden');
+  }
+
+  // Search toggle
+  const searchToggle = document.getElementById("searchToggle");
+  const searchInput = document.getElementById("globalSearchBar");
+
+  searchToggle.addEventListener("click", () => {
+    if (searchInput) {
+      searchInput.focus();
+    }
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

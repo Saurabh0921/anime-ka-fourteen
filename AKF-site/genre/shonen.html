@@ -1,0 +1,258 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shonen Anime - AKF</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #111827; color: white; font-family: sans-serif; }
+    .card:hover { transform: scale(1.02); transition: 0.3s ease-in-out; }
+    .card-content { display: none; }
+    .card.expanded .card-content { display: block; }
+    #sidebar { transition: transform 0.3s ease-in-out; }
+    .anime-card { height: 10rem; }
+    @media (min-width: 768px) { .anime-card { height: 12rem; } }
+    .group:hover .blur-bg { filter: blur(2px); transition: filter 0.3s ease; }
+  </style>
+  <script src="global-search.js"></script>
+</head>
+<body class="dark transition-all"><!-- Navbar --><nav class="flex justify-between items-center p-4 bg-gray-800 shadow text-white relative">
+  <div class="flex items-center gap-4">
+    <button id="menuToggle" class="p-2 rounded bg-gray-700 text-white z-10">
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
+<a href="../akf.html" id="siteTitle" class="text-xl font-bold hover:underline">AKF - Anime Ka Fourteen</a>
+  </div>
+  <div id="searchBarWrapper" class="absolute inset-0 flex justify-center items-center pointer-events-none">
+<input id="searchInput" type="text" placeholder="Search anime..."
+  class="w-2/3 md:w-1/3 px-4 py-2 rounded-full border-none outline-none bg-gray-700 text-white opacity-0 scale-95 pointer-events-none transition-all duration-300" />
+  </div>
+  <div id="searchResultsBox" class="absolute top-16 mt-2 left-0 right-0 mx-auto bg-gray-800 rounded shadow hidden w-11/12 md:w-1/2 z-50 max-h-96 overflow-y-auto"></div>
+  <div class="flex items-center gap-4 z-10">
+    <button id="searchToggle" class="p-2 rounded bg-gray-700 text-white">
+      <i id="searchIcon" data-lucide="search" class="w-5 h-5"></i>
+    </button>
+    <button id="profileToggle" class="p-2 rounded bg-gray-700 text-white">
+      <i data-lucide="user" class="w-5 h-5"></i>
+    </button>
+  </div>
+</nav><!-- Sidebar --><aside id="sidebar" class="fixed top-0 left-0 h-full w-48 bg-gray-800 p-4 space-y-4 z-50 transform -translate-x-full transition-transform duration-300">
+  <a href="../akf.html#home" class="block font-semibold hover:underline">Home</a>
+  <a href="../akf.html#popular" class="block font-semibold hover:underline">Popular</a>
+  <a href="../akf.html#genres" class="block font-semibold hover:underline">Genres</a>
+  <a href="../akf.html#settings" class="block font-semibold hover:underline">Settings</a>
+</aside>
+<div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40"></div><!-- Profile Modal --><div id="profileModal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50">
+  <div class="bg-gray-800 p-6 rounded-xl shadow-lg w-80 text-white relative">
+    <button id="closeProfile" class="absolute top-2 right-2">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+    <h3 class="text-xl font-bold mb-2">User Profile</h3>
+    <p><strong>Username:</strong> anime_fan_14</p>
+    <p><strong>Email:</strong> fan14@example.com</p>
+    <button class="mt-4 bg-red-600 px-4 py-2 rounded text-white">Logout</button>
+  </div>
+</div><!-- Search Results --><section id="searchResults" class="p-4 hidden">
+  <h2 class="text-2xl font-semibold mb-4">Search Results</h2>
+  <div id="resultsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+</section><!-- Main Content --><main class="p-4 max-w-5xl mx-auto">
+  <section id="animeSection">
+    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+      <i data-lucide="flame" class="w-6 h-6"></i>
+      Shonen Anime
+    </h2>
+    <div id="animeCards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+  </section>
+</main><script>
+  const shonenAnimeList = [
+    {
+      title: "One Piece",
+      genres: "Shonen, Adventure",
+      description: "Monkey D. Luffy sails the seas in search of the One Piece to become King of the Pirates.",
+      image: "https://animotaku.fr/wp-content/uploads/2024/10/anime-one-piece-pause-avril-2025.jpg",
+      link: "../onepiece.html"
+    },
+    {
+      title: "My Hero Academia",
+      genres: "Shonen, Superhero",
+      description: "Izuku Midoriya enters a high school for heroes as he strives to be the number one hero.",
+      image: "https://hips.hearstapps.com/hmg-prod/images/my-hero-academia-1580210071.jpg",
+      link: "../myhero.html"
+    },
+    // Add more anime from other genres/pages here
+  ];
+
+  const container = document.getElementById('animeCards');
+  
+  const resultsContainer = document.getElementById('resultsContainer');
+  const animeSection = document.getElementById('animeSection');
+  const searchResults = document.getElementById('searchResults');
+  const searchToggle = document.getElementById('searchToggle');
+  const searchInput = document.getElementById('searchInput');
+
+  shonenAnimeList.forEach(anime => {
+  container.innerHTML += createAnimeCard(anime);
+});
+
+  function createAnimeCard(anime) {
+    return `
+      <a href="${anime.link}" class="block group relative rounded-xl overflow-hidden shadow-lg transform transition-transform hover:scale-105">
+        <div class="anime-card w-full bg-cover bg-center relative" style="background-image: url('${anime.image}');">
+          <div class="absolute inset-0 blur-bg bg-cover bg-center" style="background-image: url('${anime.image}');"></div>
+          <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 transition duration-300"></div>
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-white z-10 text-center px-4">
+            <h3 class="text-2xl font-bold">${anime.title}</h3>
+            <p class="text-sm text-gray-200">${anime.genres}</p>
+            <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300">${anime.description}</p>
+          </div>
+        </div>
+      </a>
+    `;
+  }
+
+  searchToggle.addEventListener('click', () => {
+    searchInput.classList.toggle('opacity-0');
+    searchInput.classList.toggle('scale-95');
+    searchInput.classList.toggle('opacity-100');
+    searchInput.classList.toggle('scale-100');
+    searchInput.focus();
+  });
+
+  searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase().trim();
+  const resultsBox = document.getElementById('searchResultsBox');
+  resultsBox.innerHTML = '';
+
+  if (!query) {
+    resultsBox.classList.add('hidden');
+    return;
+  }
+
+  const results = window.allAnime.filter(anime =>
+    anime.title.toLowerCase().includes(query) ||
+    anime.genre.toLowerCase().includes(query)
+  );
+
+  if (results.length === 0) {
+    resultsBox.innerHTML = `<div class="p-2 text-gray-400">No results found.</div>`;
+  } else {
+    results.forEach(anime => {
+      const item = document.createElement('div');
+      item.className = 'cursor-pointer px-4 py-2 hover:bg-gray-700';
+      item.innerHTML = `<strong>${anime.title}</strong> <span class="text-sm text-gray-400">(${anime.genre})</span>`;
+      item.onclick = () => window.location.href = anime.link;
+      resultsBox.appendChild(item);
+    });
+  }
+
+  resultsBox.classList.remove('hidden');
+});
+
+  // UI Behavior
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const profileToggle = document.getElementById('profileToggle');
+  const profileModal = document.getElementById('profileModal');
+  const closeProfile = document.getElementById('closeProfile');
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  });
+
+  overlay.addEventListener('click', () => {
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+    profileModal.classList.add('hidden');
+  });
+
+  profileToggle.addEventListener('click', () => {
+    profileModal.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+  });
+
+  closeProfile.addEventListener('click', () => {
+    profileModal.classList.add('hidden');
+    overlay.classList.add('hidden');
+  });
+
+  lucide.createIcons();
+</script>
+<script>
+  const allAnime = [
+    { title: "Berserk", genre: "Seinen", link: "berserk.html" },
+    { title: "Monster", genre: "Seinen", link: "monster.html" },
+    { title: "Naruto", genre: "Shonen", link: "naruto.html" },
+    { title: "Attack on Titan", genre: "Shonen", link: "aot.html" },
+    { title: "Kaguya-sama", genre: "Romance", link: "kaguya.html" },
+    { title: "Ergo Proxy", genre: "Seinen", link: "ergoproxy.html" },
+    { title: "Death Note", genre: "Psychological", link: "deathnote.html" },
+    // Add more as your site grows
+  ];
+
+  const searchToggle = document.getElementById('searchToggle');
+  const searchInput = document.getElementById('searchInput');
+  const resultsBox = document.getElementById('searchResultsBox');
+
+  let searchOpen = false;
+
+  searchToggle.addEventListener('click', () => {
+  searchOpen = !searchOpen;
+  // Toggle the logo visibility
+  document.getElementById('siteTitle').classList.toggle('hidden', searchOpen); // Hide logo when search is open
+
+  if (searchOpen) {
+    // Show the search bar with animation
+    searchInput.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+    searchInput.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+    searchInput.focus();
+  } else {
+    // Hide the search bar and reset
+    searchInput.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+    searchInput.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+    resultsBox.classList.add('hidden');
+    searchInput.value = '';
+  }
+});
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    resultsBox.innerHTML = '';
+    if (query.trim() === '') {
+      resultsBox.classList.add('hidden');
+      return;
+    }
+
+    const matches = allAnime.filter(a =>
+      a.title.toLowerCase().includes(query) ||
+      a.genre.toLowerCase().includes(query)
+    );
+
+    if (matches.length === 0) {
+      resultsBox.innerHTML = `<div class="search-result-item">No results found.</div>`;
+    } else {
+      matches.forEach(anime => {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        item.innerHTML = `<strong>${anime.title}</strong> <span class="text-sm text-gray-500">(${anime.genre})</span>`;
+        item.onclick = () => window.location.href = anime.link;
+        resultsBox.appendChild(item);
+      });
+    }
+
+    resultsBox.classList.remove('hidden');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !resultsBox.contains(e.target) && !searchToggle.contains(e.target)) {
+      searchInput.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+      searchInput.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+      resultsBox.classList.add('hidden');
+      searchInput.value = '';
+      searchOpen = false;
+    }
+  });
+</script>
+</body>
+</html>
